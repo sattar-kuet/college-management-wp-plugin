@@ -8,50 +8,47 @@ if(isset($_POST['submit_btn'])){
 
   $subject_ids = $_POST['subject_ids'];
   $data = $_POST;
-  //print_r($data); exit;
+  //echo '<pre>';print_r($data); exit;
   global $wpdb;
-  $table = $wpdb->prefix.'exam_configuration';
+  $table = $wpdb->prefix.'student_result';
 
-  for($i=0; $i < count($subject_ids); $i++){
-
-        $sql = "SELECT * FROM ".$table." WHERE exam_id=".$data['exam_id'];
-        $sql .= " AND subject_id=".$subject_ids[$i];
+  foreach($data['student_ids'] as $student_id){
+    foreach($data['subject'][$student_id] as $subject_id){
+       $sql = "SELECT * FROM ".$table." WHERE exam_id=".$data['exam_id'];
+        $sql .= " AND student_id=".$student_id;
+        $sql .= " AND subject_id=".$subject_id;
         $old_record = $wpdb->get_results($sql);
         if(count($old_record)){
           $id = $old_record[0]->id;
           $sql = "UPDATE $table SET ";
-          $sql .=" mcq_mark=".$data['mcq_mark'][$i];
-          $sql .=", mcq_pass_mark=".$data['mcq_pass_mark'][$i];
-          $sql .=", written_mark=".$data['written_mark'][$i];
-          $sql .=", written_pass_mark=".$data['written_pass_mark'][$i];
+          $sql .=" mcq_mark=".$data['mcq'][$student_id][$subject_id];
+          $sql .=", written_mark=".$data['written'][$student_id][$subject_id];
           $sql .=" WHERE id=".$id;
           //echo $sql; exit;
           $wpdb->query($wpdb->prepare($sql));
-        }
-        else{
+        }else{
           $formatted_data = [];
           $formatted_data['exam_id'] = $data['exam_id'];
-          $formatted_data['subject_id'] = $subject_ids[$i];  
-          $formatted_data['mcq_mark'] = $data['mcq_mark'][$i];  
-          $formatted_data['mcq_pass_mark'] = $data['mcq_pass_mark'][$i];  
-          $formatted_data['written_mark'] = $data['written_mark'][$i];  
-          $formatted_data['written_pass_mark'] = $data['written_pass_mark'][$i];  
+          $formatted_data['student_id'] = $student_id;
+          $formatted_data['subject_id'] = $subject_id;  
+          $formatted_data['mcq_mark'] = $data['mcq'][$student_id][$subject_id];   
+          $formatted_data['written_mark'] = $data['written'][$student_id][$subject_id];
          // print_r($formatted_data); exit;
           $result = $wpdb->insert($table,$formatted_data);
         }
-        
+    }
   }
 }
 $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id =".$_GET['id'];
 $exam = $wpdb->get_results($sql)[0];
 
-$sql = "SELECT student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, student.session_start as student_session_start, student.session_end as student_session_end, subject.name as subject_name, student_subject.subject_type as subject_type FROM ".$wpdb->prefix."student as student ";
+$sql = "SELECT student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, student.session_start as student_session_start, student.session_end as student_session_end, subject.id as subject_id, subject.name as subject_name, student_subject.subject_id as subject_id, student_subject.subject_type as subject_type FROM ".$wpdb->prefix."student as student ";
 
 $sql .= " LEFT JOIN wp_student_subject as student_subject ON student.id = student_subject.student_id";
-$sql .= " LEFT JOIN wp_subject as subject ON student_subject.id = subject.id";
+$sql .= " LEFT JOIN wp_subject as subject ON student_subject.subject_id = subject.id";
 $sql .=" WHERE student.session_start =".$exam->session_start." AND student.session_end=".$exam->session_end;
 $student_subjects = $wpdb->get_results($sql);
-
+//echo'<pre>'; print_r($student_subjects);
 $student_subject_list = [];
 $index = -1;
 $student_enlisted = [];
@@ -60,6 +57,7 @@ foreach($student_subjects as $student_subject){
     $index++;
   }
    $student_subject_list[$index]['student'] = [
+                                         'id' => $student_subject->student_id,
                                          'name' => $student_subject->student_name,
                                          'roll' => $student_subject->student_roll,
                                          'group' => $student_subject->student_group,
@@ -67,9 +65,9 @@ foreach($student_subjects as $student_subject){
                                    ];
    if($student_subject->subject_type != -1 && !empty($student_subject->subject_name)){
      $student_subject_list[$index]['subjects'][] = [
+                                         'id' => $student_subject->subject_id,
                                          'name' => $student_subject->subject_name,
-                                         'type' => $student_subject->subject_type
-                                        
+                                         'type' => $student_subject->subject_type   
                                    ];
     $student_enlisted[$student_subject->student_id] = 1;
 
@@ -92,6 +90,17 @@ foreach($exam_configurations as $exam_configuration){
  $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id=".$_GET['id'];
  $exam = $wpdb->get_results($sql)[0]; 
 // print_r($exam); exit;
+ $sql = "SELECT * FROM ".$wpdb->prefix."student_result WHERE exam_id=".$_GET['id'];
+ $exam_results = $wpdb->get_results($sql); 
+ $mcq_mark=[]; 
+ $written_mark=[]; 
+ foreach($exam_results as $exam_result){
+     $mcq_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->mcq_mark;
+     $written_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->written_mark;
+ }
+
+// echo '<pre>'; print_r($mcq_mark); 
+
 ?>
 <div class="wrap">
   <h2 style="margin-bottom: 20px;">Input Mark for <?php echo $exam->name.': '.$exam->session_start.'-'.$exam->session_end; ?> </h2> 
@@ -106,17 +115,26 @@ foreach($exam_configurations as $exam_configuration){
                   <tr>
                     <td><?php echo $student_subject['student']['name'].' '.$student_subject['student']['roll'].' '.$student_subject['student']['group'].' '. $student_subject['student']['session']; ?>
                     </td>
+                    <input type="hidden"  name="student_ids[]" value="<?php echo $student_subject['student']['id']; ?>">
                   </tr>
 
                   <?php if(isset($student_subject['subjects'] )){ ?>
 
-                      <?php foreach($student_subject['subjects'] as $subject){ ?>
+                      <?php foreach($student_subject['subjects'] as $subject){ 
+                          $student_id = $student_subject['student']['id'];
+                          $subject_id = $subject['id'];
+                          $subject_name_attr = "subject[".$student_subject['student']['id']."][]";
+                          $mcq_name_attr = "mcq[".$student_subject['student']['id']."][".$subject['id']."]";
+                          $written_name_attr = "written[".$student_subject['student']['id']."][".$subject['id']."]";
+                        ?>
 
                         <tr>
                             <td>
+                              <input type="hidden"  name="<?php echo $subject_name_attr; ?>" value="<?php echo $subject['id']; ?>">
                               <input type="text"  value="<?php echo $subject['name']; ?>" readonly>
-                              <input type="text"  name="mcq_mark" placeholder="MCQ mark">
-                              <input type="text"  name="written_mark" placeholder="Written mark">
+                              <input type="text"  name="<?php echo $mcq_name_attr; ?>" placeholder="MCQ mark"
+                              <?php if(isset($mcq_mark[$student_id][$subject_id])) {?> value="<?php echo $mcq_mark[$student_id][$subject_id];?>" <?php } ?>>
+                              <input type="text"  name="<?php echo $written_name_attr; ?>" placeholder="Written mark" <?php if(isset($written_mark[$student_id][$subject_id])) {?> value="<?php echo $written_mark[$student_id][$subject_id];?>" <?php } ?>>
                             </td>   
                         </tr> 
 
