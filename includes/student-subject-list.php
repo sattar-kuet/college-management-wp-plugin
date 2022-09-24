@@ -140,6 +140,6 @@ function show_student_subject_list() {?>
      $subject_table->search_box("Search ", "student_subject_search_box_id");
   echo '</form>';
   $subject_table->display();
+  echo '</div>';
 }
 ?>
-</div>

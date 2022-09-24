@@ -1,5 +1,4 @@
 <?php
-
 //print_r($subject); exit;
 if(isset($_POST['name'])){
         global $wpdb;

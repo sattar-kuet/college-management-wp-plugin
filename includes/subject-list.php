@@ -94,6 +94,6 @@ function show_subject_list() {?>
      $subject_table->search_box("Search Subject", "subject_search_box_id");
   echo '</form>';
   $subject_table->display();
+  echo '</div>';
 }
 ?>
-</div>

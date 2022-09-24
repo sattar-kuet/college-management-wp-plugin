@@ -1,7 +1,4 @@
 <?php
-
-//admin_url('admin.php?page=itscholarbd_student_subject&action=add')
-
 global $wpdb;
 $sql = "SELECT * FROM ".$wpdb->prefix."student WHERE id=".$_GET['id'];
 $student = $wpdb->get_results($sql)[0];

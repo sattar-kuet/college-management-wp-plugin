@@ -106,6 +106,7 @@ class College_Management_Activator {
                         name varchar(200) NOT NULL,
                         session_start int(11) NOT NULL,
                         session_end int(11) NOT NULL,
+                        status varchar(20) default 'draft',
                         UNIQUE KEY id (id)
                 ) $charset_collate;";
 
@@ -147,10 +148,37 @@ class College_Management_Activator {
                $sql = "CREATE TABLE $db_table_name (
                         id int(11) NOT NULL auto_increment,
                         exam_id int(11) NOT NULL,
+                        group_name varchar(200) NOT NULL,
                         student_id int(11) NOT NULL,
                         subject_id int(11) NOT NULL,
+                        subject_type tinyint(1) NOT NULL,
                         written_mark double NOT NULL,
                         mcq_mark double NOT NULL,
+                        UNIQUE KEY id (id)
+                ) $charset_collate;";
+
+           require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+           //echo $sql; exit;
+           dbDelta( $sql );
+        }
+        $db_table_name = $wpdb->prefix . 'processed_result';  
+        $charset_collate = $wpdb->get_charset_collate();
+       
+         //Check to see if the table exists already, if not, then create it
+        if($wpdb->get_var( "show tables like '$db_table_name'" ) != $db_table_name ) 
+        {
+               $sql = "CREATE TABLE $db_table_name (
+                        id int(11) NOT NULL auto_increment,
+                        exam_id int(11) NOT NULL,
+                        group_name varchar(200) NOT NULL,
+                        student_id int(11) NOT NULL,
+                        subject_id int(11),
+                        written_mark double NOT NULL,
+                        mcq_mark double NOT NULL,
+                        total_mark double NOT NULL,
+                        percentage_mark double NOT NULL,
+                        gpa double NOT NULL,
+                        grade_name varchar(30) NOT NULL,
                         UNIQUE KEY id (id)
                 ) $charset_collate;";
 
@@ -162,3 +190,4 @@ class College_Management_Activator {
 	}
 
 }
+?>

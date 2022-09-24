@@ -45,3 +45,4 @@ class College_Management_i18n {
 
 
 }
+?>

@@ -1,6 +1,4 @@
 <?php
-
-
 if(isset($_POST['name'])){
         global $wpdb;
         $table_name = $wpdb->prefix . 'exam';

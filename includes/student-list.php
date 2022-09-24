@@ -1,5 +1,6 @@
 <?php
 require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
+
 class StudentTable extends WP_List_Table{
 
 	public function prepare_items(){
@@ -99,6 +100,6 @@ function show_student_list() {?>
      $student_table->search_box("Search Student", "student_search_box_id");
   echo '</form>';
   $student_table->display();
+  echo "</div>";
 }
 ?>
-</div>

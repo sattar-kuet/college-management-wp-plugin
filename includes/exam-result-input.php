@@ -1,9 +1,5 @@
 <?php
-//admin_url('admin.php?page=itscholarbd_student_subject&action=add')
 global $wpdb;
-
-
-
 if(isset($_POST['submit_btn'])){
 
   $subject_ids = $_POST['subject_ids'];
@@ -12,7 +8,9 @@ if(isset($_POST['submit_btn'])){
   global $wpdb;
   $table = $wpdb->prefix.'student_result';
 
-  foreach($data['student_ids'] as $student_id){
+  foreach($data['student_ids'] as $key=>$student_id){
+
+    $group_name = $data['student_groups'][$key];
     foreach($data['subject'][$student_id] as $subject_id){
        $sql = "SELECT * FROM ".$table." WHERE exam_id=".$data['exam_id'];
         $sql .= " AND student_id=".$student_id;
@@ -20,20 +18,30 @@ if(isset($_POST['submit_btn'])){
         $old_record = $wpdb->get_results($sql);
         if(count($old_record)){
           $id = $old_record[0]->id;
+          $mcq_mark = $data['mcq'][$student_id][$subject_id];
+          if(empty($data['mcq'][$student_id][$subject_id])){
+            $mcq_mark = 'null';
+          }
+          $written_mark = $data['written'][$student_id][$subject_id];
+          if(empty($data['written'][$student_id][$subject_id])){
+            $written_mark = 'null';
+          }
           $sql = "UPDATE $table SET ";
-          $sql .=" mcq_mark=".$data['mcq'][$student_id][$subject_id];
-          $sql .=", written_mark=".$data['written'][$student_id][$subject_id];
+          $sql .=" mcq_mark=".$mcq_mark;
+          $sql .=", written_mark=".$written_mark;
           $sql .=" WHERE id=".$id;
           //echo $sql; exit;
           $wpdb->query($wpdb->prepare($sql));
         }else{
           $formatted_data = [];
           $formatted_data['exam_id'] = $data['exam_id'];
+          $formatted_data['group_name'] = $group_name;
           $formatted_data['student_id'] = $student_id;
           $formatted_data['subject_id'] = $subject_id;  
+          $formatted_data['subject_type'] = $data['subject_type'][$student_id][$subject_id];  
           $formatted_data['mcq_mark'] = $data['mcq'][$student_id][$subject_id];   
           $formatted_data['written_mark'] = $data['written'][$student_id][$subject_id];
-         // print_r($formatted_data); exit;
+        // print_r($formatted_data); exit;
           $result = $wpdb->insert($table,$formatted_data);
         }
     }
@@ -48,6 +56,7 @@ $sql .= " LEFT JOIN wp_student_subject as student_subject ON student.id = studen
 $sql .= " LEFT JOIN wp_subject as subject ON student_subject.subject_id = subject.id";
 $sql .=" WHERE student.session_start =".$exam->session_start." AND student.session_end=".$exam->session_end;
 $student_subjects = $wpdb->get_results($sql);
+//echo $sql;
 //echo'<pre>'; print_r($student_subjects);
 $student_subject_list = [];
 $index = -1;
@@ -63,15 +72,16 @@ foreach($student_subjects as $student_subject){
                                          'group' => $student_subject->student_group,
                                          'session' => $student_subject->student_session_start.'-'.$student_subject->student_session_end,
                                    ];
-   if($student_subject->subject_type != -1 && !empty($student_subject->subject_name)){
+
+   if($student_subject->subject_type != -1 && !empty($student_subject->subject_name
+    && $_GET['subject_id'] == $student_subject->subject_id)){
      $student_subject_list[$index]['subjects'][] = [
                                          'id' => $student_subject->subject_id,
                                          'name' => $student_subject->subject_name,
                                          'type' => $student_subject->subject_type   
                                    ];
-    $student_enlisted[$student_subject->student_id] = 1;
-
    }   
+    $student_enlisted[$student_subject->student_id] = 1;
 }
 
 //echo '<pre>'; print_r($student_subject_list); exit;
@@ -95,16 +105,36 @@ foreach($exam_configurations as $exam_configuration){
  $mcq_mark=[]; 
  $written_mark=[]; 
  foreach($exam_results as $exam_result){
+
      $mcq_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->mcq_mark;
      $written_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->written_mark;
  }
 
 // echo '<pre>'; print_r($mcq_mark); 
 
+  $sql = "SELECT * FROM ".$wpdb->prefix."subject";
+ $subjects = $wpdb->get_results($sql);
+ $urls = [];
+ $current_url = admin_url('admin.php?page='.$_GET['page'].'&action='.$_GET['action'].'&id='.$_GET['id']);
+ 
+ foreach($subjects as $subject){
+    $urls[] = [
+      'href'=>$current_url.'&subject_id='.$subject->id,
+      'text'=>$subject->name,
+      'subject_id'=>$subject->id
+    ];
+ }
 ?>
 <div class="wrap">
-  <h2 style="margin-bottom: 20px;">Input Mark for <?php echo $exam->name.': '.$exam->session_start.'-'.$exam->session_end; ?> </h2> 
-  
+ <h2 style="margin-bottom: 20px;">Input Mark for <?php echo $exam->name.': '.$exam->session_start.'-'.$exam->session_end; ?> </h2> 
+<form action="" method="get">
+    <?php 
+     foreach($urls as $url) { ?>
+         <a class ="custom_link <?php if ($_GET['subject_id'] == $url['subject_id']) echo 'active_link';?>" href="<?php echo $url['href']; ?>"><?php echo $url['text']; ?></a>
+     <?php } ?>
+</form>
+ 
+<?php if (isset($_GET['subject_id'])) { ?>
   <form method="post" name="add_student_form">
     <input type="hidden" name="exam_id" value="<?php echo $exam->id; ?>">
         <table>
@@ -116,6 +146,7 @@ foreach($exam_configurations as $exam_configuration){
                     <td><?php echo $student_subject['student']['name'].' '.$student_subject['student']['roll'].' '.$student_subject['student']['group'].' '. $student_subject['student']['session']; ?>
                     </td>
                     <input type="hidden"  name="student_ids[]" value="<?php echo $student_subject['student']['id']; ?>">
+                    <input type="hidden"  name="student_groups[]" value="<?php echo $student_subject['student']['group']; ?>">
                   </tr>
 
                   <?php if(isset($student_subject['subjects'] )){ ?>
@@ -123,14 +154,17 @@ foreach($exam_configurations as $exam_configuration){
                       <?php foreach($student_subject['subjects'] as $subject){ 
                           $student_id = $student_subject['student']['id'];
                           $subject_id = $subject['id'];
-                          $subject_name_attr = "subject[".$student_subject['student']['id']."][]";
-                          $mcq_name_attr = "mcq[".$student_subject['student']['id']."][".$subject['id']."]";
-                          $written_name_attr = "written[".$student_subject['student']['id']."][".$subject['id']."]";
+                          $subject_name_attr = "subject[".$student_subject['student']['id']."][]"; 
+                         $subject_type_name_attr = "subject_type[".$student_id."][".$subject_id."]"; 
+                         
+                          $mcq_name_attr = "mcq[".$student_id."][".$subject_id."]";
+                          $written_name_attr = "written[".$student_id."][".$subject_id."]";
                         ?>
 
                         <tr>
                             <td>
                               <input type="hidden"  name="<?php echo $subject_name_attr; ?>" value="<?php echo $subject['id']; ?>">
+                              <input type="hidden"  name="<?php echo $subject_type_name_attr; ?>" value="<?php echo $subject['type']; ?>">
                               <input type="text"  value="<?php echo $subject['name']; ?>" readonly>
                               <input type="text"  name="<?php echo $mcq_name_attr; ?>" placeholder="MCQ mark"
                               <?php if(isset($mcq_mark[$student_id][$subject_id])) {?> value="<?php echo $mcq_mark[$student_id][$subject_id];?>" <?php } ?>>
@@ -154,6 +188,19 @@ foreach($exam_configurations as $exam_configuration){
         </table>
         
   </form>
+<?php } ?>
 </div>
 
-gn0w+S#A8Tzw
+<style type="text/css">
+  .custom_link{
+    text-decoration: none;
+    display: inline-block;
+    background: #3c434a;
+    padding: 4px 10px;
+    color: #FFF;
+    margin: 10px;
+  }
+  .active_link {
+    background: #b97906;
+}
+</style>

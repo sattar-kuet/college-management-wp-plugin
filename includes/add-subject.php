@@ -1,6 +1,4 @@
 <?php
-
-
 if(isset($_POST['name'])){
         //echo 'here'; exit;
 
@@ -13,7 +11,6 @@ if(isset($_POST['name'])){
         $result = $wpdb->insert($table,$data);
         //print_r($result); exit;
 }
-
 ?>
 <div class="wrap">
   <h2 style="margin-bottom: 20px;">Add new subject</h2> 

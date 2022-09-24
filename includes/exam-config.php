@@ -1,6 +1,5 @@
 <?php
-
-//admin_url('admin.php?page=itscholarbd_student_subject&action=add')
+ require plugin_dir_path( __FILE__ ) . 'utility.php';
 
 global $wpdb;
 
@@ -47,16 +46,8 @@ if(isset($_POST['submit_btn'])){
         
   }
 }
-$sql = "SELECT * FROM ".$wpdb->prefix."exam_configuration WHERE exam_id=".$_GET['id'];
-$exam_configurations = $wpdb->get_results($sql);
-//echo $sql; exit;
-$active_record = [];
-foreach($exam_configurations as $exam_configuration){
-  $active_record[$exam_configuration->subject_id]['mcq_mark'] = $exam_configuration->mcq_mark;
-  $active_record[$exam_configuration->subject_id]['mcq_pass_mark'] = $exam_configuration->mcq_pass_mark;
-  $active_record[$exam_configuration->subject_id]['written_mark'] = $exam_configuration->written_mark;
-  $active_record[$exam_configuration->subject_id]['written_pass_mark'] = $exam_configuration->written_pass_mark;
-}
+
+$active_record = exam_config($_GET['id']);
 //print_r($active_record); exit;
  $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id=".$_GET['id'];
  $exam = $wpdb->get_results($sql)[0]; 

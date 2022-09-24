@@ -61,11 +61,11 @@ register_deactivation_hook( __FILE__, 'deactivate_college_management' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-college-management.php';
-require plugin_dir_path( __FILE__ ) . 'includes/student-list.php';
-require plugin_dir_path( __FILE__ ) . 'includes/subject-list.php';
-require plugin_dir_path( __FILE__ ) . 'includes/student-subject-list.php';
-require plugin_dir_path( __FILE__ ) . 'includes/exam_list.php';
+ require plugin_dir_path( __FILE__ ) . 'includes/class-college-management.php';
+ require plugin_dir_path( __FILE__ ) . 'includes/student-list.php';
+ require plugin_dir_path( __FILE__ ) . 'includes/subject-list.php';
+ require plugin_dir_path( __FILE__ ) . 'includes/student-subject-list.php';
+ require plugin_dir_path( __FILE__ ) . 'includes/exam_list.php';
 
 /**
  * Begins execution of the plugin.
@@ -116,18 +116,11 @@ function madp_portal_admin_pages() {
     );
  add_submenu_page(
         'itscholarbd_institute_manage', 
-        'Exam Configuration', 
-        'Exam Configuration', 
+        'Exam & Result', 
+        'Exam & Result', 
         'manage_options', 
         'itscholarbd_exam_configuration', 
         'itscholarbd_exam_configuration_action'
-    );add_submenu_page(
-        'itscholarbd_institute_manage', 
-        'Student Result', 
-        'Student Result', 
-        'manage_options', 
-        'itscholarbd_student_result', 
-        'itscholarbd_student_result_action'
     );
     
 }
@@ -194,6 +187,20 @@ function itscholarbd_exam_configuration_action() {
         if($_GET['action'] == 'result_show'){
             require plugin_dir_path( __FILE__ ) . 'includes/exam-result-show.php';
         }
+        if($_GET['action'] == 'result_publish'){
+            require plugin_dir_path( __FILE__ ) . 'includes/utility.php';
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'exam';
+            $data = $_POST;
+            extract($data);
+            $exam_id = $_GET['id'];
+            process_result($exam_id);
+            $sql = "UPDATE $table_name SET status='published' WHERE id=$exam_id";
+           // echo $sql; exit;
+            $wpdb->query($wpdb->prepare($sql));
+                show_exam_list();
+            
+        }
     }    
 }
-
+?>

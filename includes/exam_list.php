@@ -47,6 +47,7 @@ class ExamConfigTable extends WP_List_Table{
 				$row['name'] = $single->name;
 				$row['session_start'] = $single->session_start;
 				$row['session_end'] = $single->session_end;
+				$row['status'] = $single->status;
 				$data[] = $row;
 		  }
    }
@@ -59,7 +60,8 @@ class ExamConfigTable extends WP_List_Table{
               "id" => "ID",
               "name" => "Name",
               "session_start" => "Session Start",
-              "session_end" => "Session End"
+              "session_end" => "Session End",
+              "status" => "Status",
           ];
 
           return $columns;
@@ -72,6 +74,7 @@ class ExamConfigTable extends WP_List_Table{
 			case 'name':
 			case 'session_start':
 			case 'session_end':
+			case 'status':
 			    return $item[$column_name];
 			default:
 				return 'No Value';
@@ -83,7 +86,9 @@ class ExamConfigTable extends WP_List_Table{
             "edit" => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a', $_GET['page'],'edit',$item['id']),
             "config" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Config</a', $_GET['page'],'config',$item['id']),
             "result_input" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Input</a', $_GET['page'],'result_input',$item['id']),
-            "result_show" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Show</a', $_GET['page'],'result_show',$item['id']),
+            
+            "result_publish" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Publish</a', $_GET['page'],'result_publish',$item['id']),
+            "result_show" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Show</a', $_GET['page'],'result_show',$item['id'])
             
 		);
 
@@ -101,6 +106,6 @@ function show_exam_list() {?>
      $subject_table->search_box("Search ", "student_subject_search_box_id");
   echo '</form>';
   $subject_table->display();
+  echo '</div>';
 }
 ?>
-</div>

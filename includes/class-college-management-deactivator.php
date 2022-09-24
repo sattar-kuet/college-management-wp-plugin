@@ -34,3 +34,4 @@ class College_Management_Deactivator {
 	}
 
 }
+?>
