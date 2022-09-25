@@ -1,10 +1,12 @@
 <?php
+require plugin_dir_path( __FILE__ ) . 'utility.php';
+
 global $wpdb;
 $sql = "SELECT * FROM ".$wpdb->prefix."student WHERE id=".$_GET['id'];
 $student = $wpdb->get_results($sql)[0];
 
 $sql = "SELECT * FROM ".$wpdb->prefix."subject WHERE group_name='".$student->group_name."'";
-$sql .= " OR group_name='all'";
+$sql .= " OR group_name='$ALL'";
 $subjects = $wpdb->get_results($sql);
 
 //print_r($subject_type); exit;
@@ -13,6 +15,7 @@ if(isset($_POST['submit_btn'])){
 
   $subject_ids = $_POST['subject_ids'];
   $mendatory = $_POST['mendatory'];
+  //echo '<pre>'; print_r($_POST); exit;
   global $wpdb;
   $table = $wpdb->prefix.'student_subject';
 
@@ -42,10 +45,12 @@ foreach($student_subjects as $student_subject){
   $subject_type[$student_subject->subject_id] = $student_subject->subject_type;
 } 
 
+//echo '<pre>'; print_r($subject_type);
+
 ?>
 <div class="wrap">
   <h2 style="margin-bottom: 20px;">Subject configuration for </h2> 
-  <h3><?php echo $student->name.'  '. $student->roll. ' '.$student->group_name;  ?></h3>
+  <h3><?php echo $student->roll.'  '. $student->name. ' '.$student->group_name;  ?></h3>
   <form method="post" name="add_student_form">
         <table>
                 <?php 
@@ -57,12 +62,12 @@ foreach($student_subjects as $student_subject){
                         </td>
 
                         <td>
-                          <select name="mendatory[]">
+                          <select name="mendatory[]" class="subject_options">
                             <?php if ($subject->mendatory == 0){ ?>
                             <option value="-1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == -1) echo 'selected'; ?> >X</option>
-                            <option value="0" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 0) echo 'selected'; ?> >Optional</option>
+                            <option value="0" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 0) echo 'selected';?>  <?php  echo 'class="optional_subject optional_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; ?> >Optional</option>
                           <?php } ?>
-                            <option value="1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 1) echo 'selected'; ?>>Compolsury</option>
+                            <option value="1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 1) echo 'selected'; ?> <?php echo 'class="mendatory_subject mendatory_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; ?> >Compolsury</option>
                           </select>
                           
                         </td>

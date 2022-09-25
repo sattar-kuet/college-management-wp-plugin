@@ -85,10 +85,10 @@ class ExamConfigTable extends WP_List_Table{
 		$action = array(
             "edit" => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a', $_GET['page'],'edit',$item['id']),
             "config" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Config</a', $_GET['page'],'config',$item['id']),
-            "result_input" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Input</a', $_GET['page'],'result_input',$item['id']),
+            "result_input" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Input Marks</a', $_GET['page'],'result_input',$item['id']),
             
-            "result_publish" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Publish</a', $_GET['page'],'result_publish',$item['id']),
-            "result_show" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Show</a', $_GET['page'],'result_show',$item['id'])
+            "result_publish" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Publish Result</a', $_GET['page'],'result_publish',$item['id']),
+            "result_show" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Show Result</a', $_GET['page'],'result_show',$item['id'])
             
 		);
 

@@ -1,4 +1,7 @@
 <?php
+require plugin_dir_path( __FILE__ ) . 'utility.php';
+//print_r($GROUPS); exit;
+unset($GROUPS[$ALL]);
 if(isset($_POST['name'])){
         //echo 'here'; exit;
         global $wpdb;
@@ -25,19 +28,20 @@ if(isset($_POST['name'])){
                         <td>Group</td>
                         <td>
                           <select name="group_name" style="width: 100%;" required>
-                             <option value="বিজ্ঞান">বিজ্ঞান</option>   
-                             <option value="মানবিক">মানবিক</option>
-                             <option value="ব্যাবসায় শিক্ষা">ব্যাবসায় শিক্ষা</option>
+                            <?php foreach($GROUPS as $group) {?>
+                             <option value="<?php echo $group;?>"><?php echo $group;?></option>
+                           <?php } ?>
+                            
                           </select>
                         </td>
                 </tr> 
                  <tr>
                         <td>Session Start</td>
-                        <td><input type="number" name="session_start" required></td>
+                        <td><input type="number" name="session_start" class="session_start" required></td>
                 </tr>
                 <tr>
                         <td>Session End</td>
-                        <td><input type="number" name="session_end" required></td>
+                        <td><input type="number" name="session_end" class="session_end" required></td>
                 </tr>
                 <tr>
                         <td colspan="2">

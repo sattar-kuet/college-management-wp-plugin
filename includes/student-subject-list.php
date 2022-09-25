@@ -43,8 +43,8 @@ class StudentSubjectTable extends WP_List_Table{
 		$raw_data = $wpdb->get_results($sql);
 		$data = [];
 		
-		$readable_subject_type[0] = 'ঐচ্ছিক';
-		$readable_subject_type[1] = 'আবশ্যিক';
+		$readable_subject_type[0] = 'Optional';
+		$readable_subject_type[1] = 'Compulsory';
 		$student_enlisted = [];
 		$index = -1;
 		if(count($raw_data) > 0){
@@ -97,8 +97,8 @@ class StudentSubjectTable extends WP_List_Table{
 	public function get_columns(){
           $columns = [
               "id" => "ID",
-              "name" => "Name",
               "roll" => "Roll",
+              "name" => "Name",
               "group_name" => "Group",
               "subject" => "Subject"
           ];
@@ -121,11 +121,9 @@ class StudentSubjectTable extends WP_List_Table{
 
 	public function column_name($item){
 		$action = array(
-            "edit" => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a', $_GET['page'],'edit',$item['id']),
-            "config" => sprintf('<a href="?page=%s&action=%s&id=%s">  Config</a', $_GET['page'],'config',$item['id']),
-            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s">  Delete</a', $_GET['page'],'delete',$item['id']),
+            "config" => sprintf('<a href="?page=%s&action=%s&id=%s">Config</a', $_GET['page'],'config',$item['id']),
+            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Delete</a', $_GET['page'],'delete',$item['id']),
 		);
-
 		return sprintf('%1$s %2$s', $item['name'], $this->row_actions($action));
 	}
 }

@@ -1,32 +1,71 @@
 (function( $ ) {
 	'use strict';
+   $(document).ready(function(){
 
-	/**
-	 * All of the code for your admin-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+       	 $('select').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        var subjectId = optionSelected.data('subjectid');
+
+       // alert(subjectId);
+
+        if(valueSelected == 0){
+          $('.mendatory_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
+          // $('.optional_subject5').attr('selected','selected');
+        } 
+        if(valueSelected == 1){
+          $('.optional_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
+          // $('.optional_subject5').attr('selected','selected');
+        }
+        //alert(valueSelected);
+   });
+
+   $('.session_start').on('change', function(e){
+      var session_start = $(this).val();
+      var session_end = parseInt(session_start) + 1;
+      $('.session_end').val(session_end);
+
+   });
+
+   $('.session_end').on('change', function(e){
+      var session_end = $(this).val();
+      var session_start = parseInt(session_end) - 1;
+      $('.session_start').val(session_start);
+
+   });
+   
+   subject_two_part_manage($);
+
+});
+
+
+
 
 })( jQuery );
+
+
+function subject_two_part_manage($){
+  $(document).ready(function(){
+    generate_two_part_subject_name($);
+    $('#first_part').hide();
+    $('#second_part').hide();
+   
+    $('#has_two_part').change(function() {
+        if(this.checked) {
+           $('#first_part').show();
+           $('#second_part').show();
+        }else{
+              $('#first_part').hide();
+              $('#second_part').hide();
+        }      
+    });
+  });
+}
+
+function generate_two_part_subject_name($){
+   $('.subject_name').on('change', function(){
+      var subject_name = $('.subject_name').val();
+      $('.first_part_name').val(subject_name+' First Paper');
+      $('.second_part_name').val(subject_name+' Second Paper');
+    });
+}

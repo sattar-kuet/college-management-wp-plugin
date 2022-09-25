@@ -27,11 +27,11 @@ $exam = $wpdb->get_results($sql)[0];
                 </tr>
                 <tr>
                         <td>Session Start</td>
-                        <td><input type="text" name="session_start" value="<?php echo $exam->session_start; ?>" required></td>
+                        <td><input type="text" name="session_start" class="session_start" value="<?php echo $exam->session_start; ?>" required></td>
                 </tr>
                  <tr>
                         <td>Session End</td>
-                        <td><input type="text" name="session_end" value="<?php echo $exam->session_end; ?>" required></td>
+                        <td><input type="text" name="session_end" class="session_end" value="<?php echo $exam->session_end; ?>" required></td>
                 </tr>
                  
                 <tr>

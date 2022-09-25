@@ -38,6 +38,7 @@ if(isset($_POST['submit_btn'])){
           $formatted_data['group_name'] = $group_name;
           $formatted_data['student_id'] = $student_id;
           $formatted_data['subject_id'] = $subject_id;  
+          $formatted_data['subject_parent_id'] = $data['parent_subject_id'][$student_id][$subject_id];   
           $formatted_data['subject_type'] = $data['subject_type'][$student_id][$subject_id];  
           $formatted_data['mcq_mark'] = $data['mcq'][$student_id][$subject_id];   
           $formatted_data['written_mark'] = $data['written'][$student_id][$subject_id];
@@ -50,7 +51,7 @@ if(isset($_POST['submit_btn'])){
 $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id =".$_GET['id'];
 $exam = $wpdb->get_results($sql)[0];
 
-$sql = "SELECT student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, student.session_start as student_session_start, student.session_end as student_session_end, subject.id as subject_id, subject.name as subject_name, student_subject.subject_id as subject_id, student_subject.subject_type as subject_type FROM ".$wpdb->prefix."student as student ";
+$sql = "SELECT student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, student.session_start as student_session_start, student.session_end as student_session_end, subject.id as subject_id, subject.parent_id as subject_parent_id, subject.name as subject_name, student_subject.subject_id as subject_id, student_subject.subject_type as subject_type FROM ".$wpdb->prefix."student as student ";
 
 $sql .= " LEFT JOIN wp_student_subject as student_subject ON student.id = student_subject.student_id";
 $sql .= " LEFT JOIN wp_subject as subject ON student_subject.subject_id = subject.id";
@@ -77,6 +78,7 @@ foreach($student_subjects as $student_subject){
     && $_GET['subject_id'] == $student_subject->subject_id)){
      $student_subject_list[$index]['subjects'][] = [
                                          'id' => $student_subject->subject_id,
+                                         'parent_id' => $student_subject->subject_parent_id,
                                          'name' => $student_subject->subject_name,
                                          'type' => $student_subject->subject_type   
                                    ];
@@ -112,21 +114,23 @@ foreach($exam_configurations as $exam_configuration){
 
 // echo '<pre>'; print_r($mcq_mark); 
 
-  $sql = "SELECT * FROM ".$wpdb->prefix."subject";
+  $sql = "SELECT subject.id as subject_id, subject.name as subject_name FROM ".$wpdb->prefix."exam_configuration as exam_config";
+  $sql .=" LEFT JOIN wp_subject as subject ON exam_config.subject_id = subject.id";
+  $sql .=" WHERE subject.has_two_part = 0 AND (exam_config.mcq_mark !=0 OR exam_config.written_mark != 0)";
  $subjects = $wpdb->get_results($sql);
  $urls = [];
  $current_url = admin_url('admin.php?page='.$_GET['page'].'&action='.$_GET['action'].'&id='.$_GET['id']);
  
  foreach($subjects as $subject){
     $urls[] = [
-      'href'=>$current_url.'&subject_id='.$subject->id,
-      'text'=>$subject->name,
-      'subject_id'=>$subject->id
+      'href'=>$current_url.'&subject_id='.$subject->subject_id,
+      'text'=>$subject->subject_name,
+      'subject_id'=>$subject->subject_id
     ];
  }
 ?>
 <div class="wrap">
- <h2 style="margin-bottom: 20px;">Input Mark for <?php echo $exam->name.': '.$exam->session_start.'-'.$exam->session_end; ?> </h2> 
+ <h2 style="margin-bottom: 20px;">Input Marks for <?php echo $exam->name.': '.$exam->session_start.'-'.$exam->session_end; ?> </h2> 
 <form action="" method="get">
     <?php 
      foreach($urls as $url) { ?>
@@ -138,15 +142,32 @@ foreach($exam_configurations as $exam_configuration){
   <form method="post" name="add_student_form">
     <input type="hidden" name="exam_id" value="<?php echo $exam->id; ?>">
         <table>
-               
+               <tr>
+                  <th>Student Name</th>
+                  <th>
+                    <?php 
+                     $subject_id_from_url = $_GET['subject_id'];
+
+                    if($active_record[$subject_id_from_url]['mcq_mark'] != 0){?>
+                      MCQ Marks
+                    <?php }?>
+                  </th>
+                  <th>
+                 <?php if($active_record[$subject_id_from_url]['written_mark'] != 0){?>
+                      Written Marks
+                    <?php }?>
+                  </th>
+               </tr>
                 <?php 
                 foreach($student_subject_list as $student_subject){ ?>
 
                   <tr>
-                    <td><?php echo $student_subject['student']['name'].' '.$student_subject['student']['roll'].' '.$student_subject['student']['group'].' '. $student_subject['student']['session']; ?>
-                    </td>
-                    <input type="hidden"  name="student_ids[]" value="<?php echo $student_subject['student']['id']; ?>">
-                    <input type="hidden"  name="student_groups[]" value="<?php echo $student_subject['student']['group']; ?>">
+                    <td colspan="2">
+                     <input type="hidden"  name="student_ids[]" value="<?php echo $student_subject['student']['id']; ?>">
+                      <input type="hidden"  name="student_groups[]" value="<?php echo $student_subject['student']['group']; ?>">
+                    <?php $student_info =  $student_subject['student']['roll'].' '.$student_subject['student']['name'].' '.$student_subject['student']['group']; ?>
+                   </td>
+                    
                   </tr>
 
                   <?php if(isset($student_subject['subjects'] )){ ?>
@@ -155,7 +176,8 @@ foreach($exam_configurations as $exam_configuration){
                           $student_id = $student_subject['student']['id'];
                           $subject_id = $subject['id'];
                           $subject_name_attr = "subject[".$student_subject['student']['id']."][]"; 
-                         $subject_type_name_attr = "subject_type[".$student_id."][".$subject_id."]"; 
+                          $subject_type_name_attr = "subject_type[".$student_id."][".$subject_id."]"; 
+                          $parent_subject_name_attr = "parent_subject_id[".$student_id."][".$subject_id."]"; 
                          
                           $mcq_name_attr = "mcq[".$student_id."][".$subject_id."]";
                           $written_name_attr = "written[".$student_id."][".$subject_id."]";
@@ -163,12 +185,33 @@ foreach($exam_configurations as $exam_configuration){
 
                         <tr>
                             <td>
+                              
                               <input type="hidden"  name="<?php echo $subject_name_attr; ?>" value="<?php echo $subject['id']; ?>">
+                              
                               <input type="hidden"  name="<?php echo $subject_type_name_attr; ?>" value="<?php echo $subject['type']; ?>">
-                              <input type="text"  value="<?php echo $subject['name']; ?>" readonly>
-                              <input type="text"  name="<?php echo $mcq_name_attr; ?>" placeholder="MCQ mark"
+
+                              <input type="hidden"  name="<?php echo $parent_subject_name_attr; ?>" value="<?php echo $subject['parent_id']; ?>">
+                              
+                              <input type="text"  value="<?php echo $student_info; ?>" readonly>
+                            </td>
+                            <td>
+                            <?php if($active_record[$subject_id]['mcq_mark'] != 0){?>
+                            
+                              <input type="number" step="0.01" max="<?php echo $active_record[$subject_id]['mcq_mark'];?>" name="<?php echo $mcq_name_attr; ?>" placeholder="MCQ mark"
                               <?php if(isset($mcq_mark[$student_id][$subject_id])) {?> value="<?php echo $mcq_mark[$student_id][$subject_id];?>" <?php } ?>>
-                              <input type="text"  name="<?php echo $written_name_attr; ?>" placeholder="Written mark" <?php if(isset($written_mark[$student_id][$subject_id])) {?> value="<?php echo $written_mark[$student_id][$subject_id];?>" <?php } ?>>
+                            
+                          <?php }else{?>
+                            <input type="hidden"  name="<?php echo $mcq_name_attr; ?>" value="0">
+
+                          <?php } ?>
+                          </td>
+                            <td>
+                              <?php if($active_record[$subject_id]['written_mark'] != 0){?>
+                              <input type="number" step="0.01" max="<?php echo $active_record[$subject_id]['written_mark'];?>"  name="<?php echo $written_name_attr; ?>" placeholder="Written mark" <?php if(isset($written_mark[$student_id][$subject_id])) {?> value="<?php echo $written_mark[$student_id][$subject_id];?>" <?php } ?>>
+                               <?php }else{?>
+                            <input type="hidden"  name="<?php echo $written_name_attr; ?>" value="0">
+
+                          <?php } ?>
                             </td>   
                         </tr> 
 

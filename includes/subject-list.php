@@ -77,7 +77,7 @@ class SubjectTable extends WP_List_Table{
 	public function column_name($item){
 		$action = array(
             "edit" => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a', $_GET['page'],'edit',$item['id']),
-            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s">  Delete</a', $_GET['page'],'delete',$item['id']),
+            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Delete</a', $_GET['page'],'delete',$item['id']),
 		);
 
 		return sprintf('%1$s %2$s', $item['name'], $this->row_actions($action));

@@ -1,5 +1,8 @@
 <?php
+require plugin_dir_path( __FILE__ ) . 'utility.php';
 require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
+
+unset($GROUPS[$ALL]);
 global $wpdb;
 
 class ProcessedResultListTable extends WP_List_Table{
@@ -42,7 +45,7 @@ class ProcessedResultListTable extends WP_List_Table{
     if($search_term !=''){
       $sql .=" WHERE exam.name LIKE '%".$search_term."%'";
     }
-   // echo $sql;
+    //echo $sql;
     $raw_data = $wpdb->get_results($sql);
    // print_r($raw_data); exit;
    
@@ -158,12 +161,8 @@ $exam = $wpdb->get_results($sql);
 $exam_config = $exam[0];
 $urls = [];
  $current_url = admin_url('admin.php?page='.$_GET['page'].'&action='.$_GET['action'].'&id='.$_GET['id']);
- $group_names = [
-   'বিজ্ঞান',
-   'মানবিক',
-   'ব্যাবসায় শিক্ষা'
- ];
- foreach($group_names as $group_name){
+
+ foreach($GROUPS as $group_name){
     $urls[] = [
       'href'=>$current_url.'&group_name='.$group_name,
       'text'=>$group_name,

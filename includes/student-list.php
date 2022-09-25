@@ -37,7 +37,7 @@ class StudentTable extends WP_List_Table{
 			$sql .=" OR roll =".$search_term;
 			$sql .=" OR group_name LIKE '%".$search_term."%'";
 		}
-		$sql .=" ORDER BY roll ASC";
+		$sql .=" ORDER BY session_start DESC";
 		$raw_data = $wpdb->get_results($sql);
 		$data = [];
 		if(count($raw_data) > 0){
@@ -46,6 +46,7 @@ class StudentTable extends WP_List_Table{
 				$row['name'] = $single->name; 
 				$row['roll'] = $single->roll; 
 				$row['group_name'] = $single->group_name; 
+				$row['session'] = $single->session_start.' - '.$single->session_end; 
 				$data[] = $row;
 			}
 		}
@@ -63,7 +64,8 @@ class StudentTable extends WP_List_Table{
               "id" => "ID",
               "roll" => "Roll",
               "name" => "Name",
-              "group_name" => "Group"
+              "session" => "Session",
+              "group_name" => "Group",
           ];
 
           return $columns;
@@ -74,6 +76,7 @@ class StudentTable extends WP_List_Table{
 			case 'name':
 			case 'roll':
 			case 'group_name':
+			case 'session':
 			    return $item[$column_name];
 			default:
 				return 'No Value';
@@ -83,7 +86,7 @@ class StudentTable extends WP_List_Table{
 	public function column_name($item){
 		$action = array(
             "edit" => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a', $_GET['page'],'edit',$item['id']),
-            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s">  Delete</a', $_GET['page'],'delete',$item['id']),
+            "delete" => sprintf('<a href="?page=%s&action=%s&id=%s"> | Delete</a', $_GET['page'],'delete',$item['id']),
 		);
 
 		return sprintf('%1$s %2$s', $item['name'], $this->row_actions($action));

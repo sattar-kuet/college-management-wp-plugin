@@ -19,11 +19,11 @@ if(isset($_POST['name'])){
                 </tr>
                 <tr>
                         <td>Session Start</td>
-                        <td><input type="text" name="session_start" required></td>
+                        <td><input type="text" name="session_start" class="session_start" required></td>
                 </tr>
                  <tr>
                         <td>Session End</td>
-                        <td><input type="text" name="session_end" required></td>
+                        <td><input type="text" name="session_end" class="session_end" required></td>
                 </tr>
                  
                 <tr>

@@ -54,12 +54,18 @@ $active_record = exam_config($_GET['id']);
 // print_r($exam); exit;
 ?>
 <div class="wrap">
-  <h2 style="margin-bottom: 20px;">Exam configuration for </h2> 
-  <h3><?php echo $exam->name.' : '.$exam->session_start.'-'.$exam->session_end; ?></h3>
+  <h2 style="margin-bottom: 20px;">Exam configuration for <span style="color: green;"><?php echo $exam->name.' : '.$exam->session_start.'-'.$exam->session_end; ?></span></h2> 
+  
   <form method="post" name="add_student_form">
     <input type="hidden" name="exam_id" value="<?php echo $exam->id; ?>">
         <table>
-               
+               <tr>
+                 <th>Subject Name</th>
+                 <th>MCQ Marks</th>
+                 <th>MCQ Pass Marks</th>
+                 <th>Written Marks</th>
+                 <th>Written Pass Marks</th>
+               </tr>
                 <?php 
                 foreach($subjects as $subject){ ?>
                   <tr>
@@ -69,21 +75,42 @@ $active_record = exam_config($_GET['id']);
                         </td>
 
                         <td>
-                         <input type="text" name="mcq_mark[]" placeholder="MCQ mark" 
+                         <?php if ($subject->parent_id == 1){?>
+                         <input type="text" name="mcq_mark[]" placeholder="MCQ marks" 
                           value="<?php echo $active_record[$subject->id]['mcq_mark'];?>">
+                        <?php } else{?>
+                          <input type="hidden" name="mcq_mark[]" value="0">
+                          <input type="text" readonly value="N/A">
+                        <?php }?>
                        </td>
                        <td>
-                         <input type="text" name="mcq_pass_mark[]" placeholder="MCQ pass mark"
+                        <?php if ($subject->parent_id == 0){?>
+                            <input type="text" name="mcq_pass_mark[]" placeholder="MCQ pass marks"
                          value="<?php echo $active_record[$subject->id]['mcq_pass_mark'];?>">
+                        <?php }else{?>
+                             <input type="hidden" name="mcq_pass_mark[]" value="0">
+                            <input type="text" readonly value="N/A">
+                        <?php } ?>
+                       
                        </td>
                        <td>
-                         <input type="text" name="written_mark[]" placeholder="Written mark"
+                        <?php if ($subject->parent_id == 1){?>
+                         <input type="text" name="written_mark[]" placeholder="Written marks"
                          value="<?php echo $active_record[$subject->id]['written_mark'];?>" >
+                       <?php } else{?>
+                        <input type="hidden" name="written_mark[]" value="0">
+                        <input type="text" readonly value="N/A">
+                      <?php } ?>
                        </td>
                        <td>
-                         <input type="text" name="written_pass_mark[]" placeholder="Written pass mark"
-                         value="<?php echo $active_record[$subject->id]['written_pass_mark'];?>" >
-                          
+                        <?php if ($subject->parent_id == 0){?>
+                            <input type="text" name="written_pass_mark[]" placeholder="Written pass marks"
+                         value="<?php echo $active_record[$subject->id]['written_pass_mark'];?>">
+                        <?php }else{?>
+                             <input type="hidden" name="written_pass_mark[]" value="0">
+                             <input type="text" readonly value="N/A">
+                           
+                        <?php } ?>
                         </td>
                         
                 </tr> 

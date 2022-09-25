@@ -1,5 +1,5 @@
 <?php
-//print_r($subject); exit;
+require plugin_dir_path( __FILE__ ) . 'utility.php';
 if(isset($_POST['name'])){
         global $wpdb;
         $table_name = $wpdb->prefix . 'subject';
@@ -31,10 +31,10 @@ $subject = $wpdb->get_results($sql)[0];
                         <td>Group</td>
                         <td>
                           <select name="group_name" style="width: 100%;" required>
-                             <option value="all" <?php if ($subject->group_name ==  "all")  echo "selected" ?> >সকল বিভাগ</option> 
-                             <option value="বিজ্ঞান" <?php if ($subject->group_name ==  "বিজ্ঞান")  echo "selected" ?> >বিজ্ঞান</option>   
-                             <option value="মানবিক" <?php if ($subject->group_name ==  "মানবিক")  echo "selected" ?>>মানবিক</option>
-                             <option value="ব্যাবসায় শিক্ষা" <?php if ($subject->group_name ==  "ব্যাবসায় শিক্ষা")  echo "selected" ?>>ব্যাবসায় শিক্ষা</option>
+                            <?php foreach($GROUPS as $group) {?>
+                             <option value="<?php echo $group;?>" <?php if ($subject->group_name ==  $group)  echo "selected" ?> ><?php echo $group;?></option>
+                           <?php } ?>
+                             
                           </select>
                         </td>
                 </tr> 

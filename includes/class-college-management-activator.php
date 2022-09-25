@@ -41,6 +41,8 @@ class College_Management_Activator {
                $sql = "CREATE TABLE $db_table_name (
                         id int(11) NOT NULL auto_increment,
                         name varchar(200) NOT NULL,
+                        parent_id int(11) NOT NULL,
+                        has_two_part tinyint(1) NOT NULL,
                         group_name varchar(200) NOT NULL,
                         mendatory tinyint(1) NOT NULL,
                         UNIQUE KEY id (id)
@@ -151,6 +153,7 @@ class College_Management_Activator {
                         group_name varchar(200) NOT NULL,
                         student_id int(11) NOT NULL,
                         subject_id int(11) NOT NULL,
+                        subject_parent_id int(11) NOT NULL,
                         subject_type tinyint(1) NOT NULL,
                         written_mark double NOT NULL,
                         mcq_mark double NOT NULL,
