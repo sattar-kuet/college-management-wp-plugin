@@ -21,7 +21,8 @@ if(isset($_POST['name'])){
         }
         $formatted_data['parent_id'] = 0;
        // echo '<pre>'; print_r($formatted_data); exit;
-        $parent_id = $wpdb->insert($table,$formatted_data);
+        $wpdb->insert($table,$formatted_data);
+        $parent_id = $wpdb->insert_id;
         
         if(isset($data['has_two_part'])){
           $child_subject['name'] = $data['first_part_name'];
