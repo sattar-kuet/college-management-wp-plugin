@@ -11,10 +11,14 @@
         
       $('.subject_option').each(function(){
          if($(this).data('parentid') == subjectId){
-            if(valueSelected == 0){
-               $('.optional_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
-            }else{
-               $('.mendatory_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
+            if(valueSelected == -1){
+               $('.inactive_subject:not(.mendatory_subject'+subjectId+', .optional_subject'+subjectId+' )').attr('selected','selected');
+            }
+            else if(valueSelected == 0){
+               $('.optional_subject:not(.mendatory_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
+            }
+            else{
+               $('.mendatory_subject:not(.optional_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
             }
          }   
       });
