@@ -8,7 +8,6 @@
         var subjectId = optionSelected.data('subjectid');
 
        // alert(subjectId);
-
         if(valueSelected == 0){
           $('.mendatory_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
           $('.subject_option').each(function(){
