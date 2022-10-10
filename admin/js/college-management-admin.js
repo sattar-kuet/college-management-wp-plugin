@@ -8,18 +8,16 @@
         var subjectId = optionSelected.data('subjectid');
 
        // alert(subjectId);
-        if(valueSelected == 0){
-          $('.mendatory_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
-          $('.subject_option').each(function(){
-            alert($(this).data('parentid'));
-          });
-
-        } 
-        if(valueSelected == 1){
-          $('.optional_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
-          // $('.optional_subject5').attr('selected','selected');
-        }
-        //alert(valueSelected);
+        
+      $('.subject_option').each(function(){
+         if($(this).data('parentid') == subjectId){
+            if(valueSelected == 0){
+               $('.optional_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
+            }else{
+               $('.optional_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
+            }
+         }   
+      });
    });
 
    $('.session_start').on('change', function(e){
