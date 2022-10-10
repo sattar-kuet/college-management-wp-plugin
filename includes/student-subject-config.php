@@ -62,7 +62,7 @@ foreach($student_subjects as $student_subject){
                         </td>
 
                         <td>
-                          <select name="mendatory[]" class="subject_options" <?php if ($subject->parent_id > 0) echo 'readonly'; ?> >
+                          <select name="mendatory[]" class="subject_options" <?php if ($subject->parent_id > 0) echo 'style="pointer-events: none;"'; ?> >
                             <?php if ($subject->mendatory == 0){ ?>
                             <option value="-1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == -1) echo 'selected'; ?> >X</option>
                             <option value="0" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 0) echo 'selected';?>  <?php  echo 'class="optional_subject optional_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >Optional</option>
