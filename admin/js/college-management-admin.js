@@ -11,7 +11,7 @@
         if(valueSelected == 0){
           $('.mendatory_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
           $('.subject_option').each(function(){
-            console.log($(this).data('parentid'));
+            alert($(this).data('parentid'));
           });
 
         } 
