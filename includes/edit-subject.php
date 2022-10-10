@@ -11,6 +11,10 @@ if(isset($_POST['name'])){
         //echo $sql; exit;
         $wpdb->query($wpdb->prepare($sql));
        
+        $sql = "UPDATE $table_name SET group_name='$group_name', mendatory= $mendatory WHERE parent_id=$id";
+        //echo $sql; exit;
+        $wpdb->query($wpdb->prepare($sql));
+       
 }
 
 global $wpdb;
