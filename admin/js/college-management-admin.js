@@ -14,7 +14,7 @@
             if(valueSelected == 0){
                $('.optional_subject:not(.mendatory_subject'+subjectId+')').attr('selected','selected');
             }else{
-               $('.optional_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
+               $('.mendatory_subject:not(.optional_subject'+subjectId+')').attr('selected','selected');
             }
          }   
       });
