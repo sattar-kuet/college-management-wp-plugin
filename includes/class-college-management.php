@@ -67,9 +67,11 @@ class College_Management {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-	
-		$this->version = '1.0.1';
-		
+		if ( defined( 'COLLEGE_MANAGEMENT_VERSION' ) ) {
+			$this->version = COLLEGE_MANAGEMENT_VERSION;
+		} else {
+			$this->version = '1.0.0';
+		}
 		$this->plugin_name = 'college-management';
 
 		$this->load_dependencies();
