@@ -11,8 +11,8 @@
        
         
       $('.subject_option').each(function(){
-         alert(subjectId);
-         alert($(this).data('parentid'));
+         console.log('selected subject id',subjectId);
+         console.log('parent id',$(this).data('parentid'));
          if($(this).data('parentid') == subjectId){
             if(valueSelected == -1){
                $('.inactive_subject:not(.mendatory_subject'+subjectId+', .optional_subject'+subjectId+' )').attr('selected','selected');
