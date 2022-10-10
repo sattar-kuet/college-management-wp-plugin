@@ -17,7 +17,7 @@
             else if(valueSelected == 0){
                $('.optional_subject:not(.mendatory_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
             }
-            else{
+            else if(valueSelected == 1){{
                $('.mendatory_subject:not(.optional_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
             }
          }   
