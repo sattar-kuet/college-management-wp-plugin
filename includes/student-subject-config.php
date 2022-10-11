@@ -64,10 +64,10 @@ foreach($student_subjects as $student_subject){
                         <td>
                           <select name="mendatory[]" class="subject_options" <?php if ($subject->parent_id > 0) echo 'style="pointer-events: none;"'; ?> >
                             <?php if ($subject->mendatory == 0){ ?>
-                            <option value="-1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == -1) echo 'selected'; ?> <?php  echo 'class="inactive_subject subject_option inactive_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >X</option>
-                            <option value="0" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 0) echo 'selected';?>  <?php  echo 'class="optional_subject subject_option optional_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >Optional</option>
+                            <option value="-1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == -1) echo 'selected'; ?> <?php  echo 'class="inactive_subject subject_option inactive_subject_parent_id'.$subject->parent_id.' inactive_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >X</option>
+                            <option value="0" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 0) echo 'selected';?>  <?php  echo 'class="optional_subject subject_option optional_subject_parent_id'.$subject->parent_id.' optional_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >Optional</option>
                           <?php } ?>
-                            <option value="1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 1) echo 'selected'; ?> <?php echo 'class="mendatory_subject subject_option mendatory_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >Compolsury</option>
+                            <option value="1" <?php if (count($subject_type)>0 && $subject_type[$subject->id] == 1) echo 'selected'; ?> <?php echo 'class="mendatory_subject subject_option mendatory_subject_parent_id'.$subject->parent_id.' mendatory_subject'.$subject->id.'"'; echo 'data-subjectid="'.$subject->id.'"'; echo 'data-parentid="'.$subject->parent_id.'"'; ?> >Compolsury</option>
                           </select>
                           
                         </td>

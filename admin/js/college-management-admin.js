@@ -8,20 +8,20 @@
         var valueSelected = this.value;
         var subjectId = optionSelected.data('subjectid');
 
-       
+       alert(valueSelected);
         
       $('.subject_option').each(function(){
          console.log('selected subject id',subjectId);
          console.log('parent id',$(this).data('parentid'));
          if($(this).data('parentid') == subjectId){
             if(valueSelected == -1){
-               $('.inactive_subject:not(.mendatory_subject'+subjectId+', .optional_subject'+subjectId+' )').attr('selected','selected');
+               $('.inactive_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 0){
-               $('.optional_subject:not(.mendatory_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
+               $('.optional_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 1){
-               $('.mendatory_subject:not(.optional_subject'+subjectId+', .inactive_subject'+subjectId+' )').attr('selected','selected');
+               $('.mendatory_subject_parent_id'+subjectId).attr('selected','selected');
             }
          }   
       });
