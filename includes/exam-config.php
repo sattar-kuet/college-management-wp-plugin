@@ -52,7 +52,7 @@ if(isset($_POST['submit_btn'])){
 }
 
 $active_record = exam_config_data($_GET['id']);
-echo '<pre>'; print_r($active_record); exit;
+//echo '<pre>'; print_r($active_record); exit;
  $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id=".$_GET['id'];
  $exam = $wpdb->get_results($sql)[0]; 
 // print_r($exam); exit;
