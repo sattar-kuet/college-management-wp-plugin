@@ -1,10 +1,39 @@
 <?php 
-function exam_config($exam_id){
-	global $wpdb;
-	$sql = "SELECT exam_config.mcq_mark as mcq_mark, exam_config.mcq_pass_mark as mcq_pass_mark,exam_config.written_mark as written_mark, exam_config.written_pass_mark as written_pass_mark, subject.id as subject_id, subject.parent_id as subject_parent FROM ".$wpdb->prefix."exam_configuration exam_config";
+function exam_config_data($exam_id){
+  $exam_configurations = exam_config_raw($exam_id);
+  $data = [];
+  foreach($exam_configurations as $exam_configuration){
+        $data[$exam_configuration->subject_id]['mcq_mark'] = $exam_configuration->mcq_mark;
+        $data[$exam_configuration->subject_id]['mcq_pass_mark'] = $exam_configuration->mcq_pass_mark;
+        $data[$exam_configuration->subject_id]['written_mark'] = $exam_configuration->written_mark;
+        $data[$exam_configuration->subject_id]['written_pass_mark'] = $exam_configuration->written_pass_mark;
+        $data[$exam_configuration->subject_id]['practical_mark'] = $exam_configuration->practical_mark;
+        $data[$exam_configuration->subject_id]['practical_pass_mark'] = $exam_configuration->practical_pass_mark;
+  }
+  return $data;
+}
+
+function exam_config_raw($exam_id){
+  global $wpdb;
+	$sql = "SELECT exam_config.mcq_mark as mcq_mark, 
+          exam_config.mcq_pass_mark as mcq_pass_mark,
+          exam_config.written_mark as written_mark, 
+          exam_config.written_pass_mark as written_pass_mark, 
+          exam_config.practical_mark as practical_mark, 
+          exam_config.practical_pass_mark as practical_pass_mark, 
+          subject.id as subject_id, 
+          subject.parent_id as subject_parent 
+          FROM ".$wpdb->prefix."exam_configuration exam_config";
+
   $sql .= " LEFT JOIN wp_subject as subject ON exam_config.subject_id = subject.id";
   $sql .=" WHERE exam_config.exam_id=".$exam_id;
 	$exam_configurations = $wpdb->get_results($sql);
+  return $exam_configurations;
+}
+
+function exam_config($exam_id){
+
+  $exam_configurations = exam_config_raw($exam_id);
 	//echo $sql; exit;
   //echo '<pre>'; print_r($exam_configurations); exit;
 	$active_record = [];
@@ -33,8 +62,18 @@ function exam_config($exam_id){
     }else{
       $active_record[$subject_id]['written_pass_mark'] = $exam_configuration->written_pass_mark;
     }
+    if(isset($active_record[$subject_id]['practical_mark'])){
+      $active_record[$subject_id]['practical_mark'] += $exam_configuration->practical_mark;
+    }else{
+      $active_record[$subject_id]['practical_mark'] = $exam_configuration->practical_mark;
+    }
+    if(isset($active_record[$subject_id]['practical_pass_mark'])){
+      $active_record[$subject_id]['practical_pass_mark'] += $exam_configuration->practical_pass_mark;
+    }else{
+      $active_record[$subject_id]['practical_pass_mark'] = $exam_configuration->practical_pass_mark;
+    }
 	}
-  //echo '<pre>'; print_r($active_record); exit;
+  echo '<pre>'; print_r($active_record); exit;
 	return $active_record;
 }
 
