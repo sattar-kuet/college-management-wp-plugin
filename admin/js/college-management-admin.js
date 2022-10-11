@@ -15,18 +15,18 @@
          console.log('parent id',$(this).data('parentid'));
          if($(this).data('parentid') == subjectId){
             if(valueSelected == -1){
-               $('.mendatory_subject_parent_id'+subjectId).attr('selected','');
-               $('.optional_subject_parent_id'+subjectId).attr('selected','');
+               $('.mendatory_subject_parent_id'+subjectId).removeAttr("selected");
+               $('.optional_subject_parent_id'+subjectId).removeAttr("selected");
                $('.inactive_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 0){
-               $('.mendatory_subject_parent_id'+subjectId).attr('selected','');
-               $('.inactive_subject_parent_id'+subjectId).attr('selected','');
+               $('.mendatory_subject_parent_id'+subjectId).removeAttr("selected");
+               $('.inactive_subject_parent_id'+subjectId).removeAttr("selected");
                $('.optional_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 1){
-               $('.inactive_subject_parent_id'+subjectId).attr('selected','');
-               $('.optional_subject_parent_id'+subjectId).attr('selected','');
+               $('.inactive_subject_parent_id'+subjectId).removeAttr("selected");
+               $('.optional_subject_parent_id'+subjectId).removeAttr("selected");
                $('.mendatory_subject_parent_id'+subjectId).attr('selected','selected');
             }
          }   
