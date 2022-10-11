@@ -51,7 +51,20 @@ if(isset($_POST['submit_btn'])){
 $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id =".$_GET['id'];
 $exam = $wpdb->get_results($sql)[0];
 
-$sql = "SELECT student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, student.session_start as student_session_start, student.session_end as student_session_end, subject.id as subject_id, subject.parent_id as subject_parent_id, subject.name as subject_name, student_subject.subject_id as subject_id, student_subject.subject_type as subject_type FROM ".$wpdb->prefix."student as student ";
+$sql = "SELECT 
+               student.id as student_id, 
+               student_subject.id as student_subject_id, 
+               student.name as student_name, 
+               student.roll as student_roll, 
+               student.group_name as student_group, 
+               student.session_start as student_session_start, 
+               student.session_end as student_session_end, 
+               subject.id as subject_id, 
+               subject.parent_id as subject_parent_id, 
+               subject.name as subject_name, 
+               student_subject.subject_id as subject_id, 
+               student_subject.subject_type as subject_type 
+               FROM ".$wpdb->prefix."student as student ";
 
 $sql .= " LEFT JOIN wp_student_subject as student_subject ON student.id = student_subject.student_id";
 $sql .= " LEFT JOIN wp_subject as subject ON student_subject.subject_id = subject.id";
