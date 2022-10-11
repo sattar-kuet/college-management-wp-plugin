@@ -8,16 +8,18 @@
         var valueSelected = this.value;
         var subjectId = optionSelected.data('subjectid');
 
-       alert(valueSelected);
+     //  alert(valueSelected);
         
       $('.subject_option').each(function(){
          console.log('selected subject id',subjectId);
          console.log('parent id',$(this).data('parentid'));
          if($(this).data('parentid') == subjectId){
+            alert('matched');
             if(valueSelected == -1){
                $('.inactive_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 0){
+               alert('matched2');
                $('.optional_subject_parent_id'+subjectId).attr('selected','selected');
             }
             else if(valueSelected == 1){
