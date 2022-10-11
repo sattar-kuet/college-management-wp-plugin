@@ -41,23 +41,35 @@ function change_child_subject_as_per_parent($){
        console.log('parent id',$(this).data('parentid'));
        if($(this).data('parentid') == subjectId){
           if(valueSelected == -1){
-             $('.mendatory_subject_parent_id'+subjectId).prop('selected', false);
-             $('.optional_subject_parent_id'+subjectId).prop('selected', false);
-             $('.inactive_subject_parent_id'+subjectId).prop('selected', true);
+            make_inactive($, subjectId)
           }
           else if(valueSelected == 0){
-             $('.mendatory_subject_parent_id'+subjectId).prop('selected', false);
-             $('.inactive_subject_parent_id'+subjectId).prop('selected', false);
-             $('.optional_subject_parent_id'+subjectId).prop('selected', true);
+            make_optional($, subjectId);
           }
           else if(valueSelected == 1){
-             $('.inactive_subject_parent_id'+subjectId).prop('selected', false);
-             $('.optional_subject_parent_id'+subjectId).prop('selected', false);
-             $('.mendatory_subject_parent_id'+subjectId).prop('selected', true);
+            make_mendatory($, subjectId);
           }
        }   
     });
  });
+}
+
+function make_mendatory($, subjectId){
+   $('.inactive_subject_parent_id'+subjectId).prop('selected', false);
+   $('.optional_subject_parent_id'+subjectId).prop('selected', false);
+   $('.mendatory_subject_parent_id'+subjectId).prop('selected', true);
+}
+
+function make_optional($, subjectId){
+   $('.mendatory_subject_parent_id'+subjectId).prop('selected', false);
+   $('.inactive_subject_parent_id'+subjectId).prop('selected', false);
+   $('.optional_subject_parent_id'+subjectId).prop('selected', true);
+}
+
+function make_inactive($, subjectId){
+   $('.mendatory_subject_parent_id'+subjectId).prop('selected', false);
+             $('.optional_subject_parent_id'+subjectId).prop('selected', false);
+             $('.inactive_subject_parent_id'+subjectId).prop('selected', true);
 }
 
 
@@ -85,12 +97,14 @@ function set_alternative_optional_or_mendatory_subject($){
     $('.subject_option').each(function(){
           if(valueSelected == 1){
             aternative_optional_subject_ids.forEach(function(aternative_optional_subject_id) {
-               console.log(aternative_optional_subject_id);
+              make_optional($,aternative_optional_subject_id);
+              $('.optional_subject'+aternative_optional_subject_id).prop('selected', true);
            });
           }
           else if(valueSelected == 0){
             aternative_optional_subject_ids.forEach(function(aternative_optional_subject_id) {
-               console.log(aternative_optional_subject_id);
+               make_mendatory($,aternative_optional_subject_id);
+               $('.mendatory_subject'+aternative_optional_subject_id).prop('selected', true);
            });
         
           }
@@ -119,10 +133,37 @@ function subject_two_part_manage($){
   });
 }
 
+function practical_two_part_manage($){
+   $(document).ready(function(){
+      generate_two_part_practical_name($);
+     $('#first_part').hide();
+     $('#second_part').hide();
+    
+     $('#has_two_part').change(function() {
+         if(this.checked) {
+            $('#first_part').show();
+            $('#second_part').show();
+         }else{
+               $('#first_part').hide();
+               $('#second_part').hide();
+         }      
+     });
+   });
+ }
+
 function generate_two_part_subject_name($){
    $('.subject_name').on('change', function(){
       var subject_name = $('.subject_name').val();
       $('.first_part_name').val(subject_name+' First Paper');
       $('.second_part_name').val(subject_name+' Second Paper');
     });
+}
+
+function generate_two_part_practical_name($){
+
+   $('.subject_name').on('change', function(){
+      var subject_name = $('.subject_name').val();
+      $('.first_part_name').val(subject_name+' First Paper Practical');
+      $('.second_part_name').val(subject_name+' Second Paper Practical');
+   });
 }

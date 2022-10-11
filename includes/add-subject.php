@@ -47,15 +47,27 @@ if(isset($_POST['name'])){
                         <td><input type="text" name="name" class="subject_name" required></td>
                         <td>Has Two Part</td>
                         <td><input type="checkbox" name="has_two_part" id="has_two_part"></td>
+                        <td>Has Practical</td>
+                        <td><input type="checkbox" name="has_practical" id="has_practical"></td>
                 </tr>
                 <tr id="first_part">
-                   <td>First Paper Name</td>
+                   <td>First Paper</td>
                    <td><input type="text" name="first_part_name" class="first_part_name"></td>
                 </tr>
                 <tr id="second_part">
-                   <td>Second Paper Name</td>
+                   <td>Second Paper</td>
                    <td><input type="text" name="second_part_name" class="second_part_name"></td>
                 </tr>
+
+                <tr id="first_part_practical">
+                   <td>First Paper Pratical</td>
+                   <td><input type="text" name="first_part_name" class="first_part_name"></td>
+                </tr>
+                <tr id="second_part_practical">
+                   <td>Second Paper Practical</td>
+                   <td><input type="text" name="second_part_name" class="second_part_name"></td>
+                </tr>
+                
                 
                  <tr>
                         <td>Group</td>
