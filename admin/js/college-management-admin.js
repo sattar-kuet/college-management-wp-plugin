@@ -5,6 +5,7 @@
       set_alternative_optional_or_mendatory_subject($);
       session_adjust($);
       subject_two_part_manage($);
+      practical_two_part_manage($);
 });
 
 
@@ -68,8 +69,8 @@ function make_optional($, subjectId){
 
 function make_inactive($, subjectId){
    $('.mendatory_subject_parent_id'+subjectId).prop('selected', false);
-             $('.optional_subject_parent_id'+subjectId).prop('selected', false);
-             $('.inactive_subject_parent_id'+subjectId).prop('selected', true);
+   $('.optional_subject_parent_id'+subjectId).prop('selected', false);
+   $('.inactive_subject_parent_id'+subjectId).prop('selected', true);
 }
 
 
@@ -136,16 +137,16 @@ function subject_two_part_manage($){
 function practical_two_part_manage($){
    $(document).ready(function(){
       generate_two_part_practical_name($);
-     $('#first_part').hide();
-     $('#second_part').hide();
+     $('#first_part_practical').hide();
+     $('#second_part_practical').hide();
     
-     $('#has_two_part').change(function() {
+     $('#has_two_part_practical').change(function() {
          if(this.checked) {
-            $('#first_part').show();
-            $('#second_part').show();
+            $('#first_part_practical').show();
+            $('#second_part_practical').show();
          }else{
-               $('#first_part').hide();
-               $('#second_part').hide();
+            $('#first_part_practical').hide();
+            $('#second_part_practical').hide();
          }      
      });
    });
@@ -163,7 +164,7 @@ function generate_two_part_practical_name($){
 
    $('.subject_name').on('change', function(){
       var subject_name = $('.subject_name').val();
-      $('.first_part_name').val(subject_name+' First Paper Practical');
-      $('.second_part_name').val(subject_name+' Second Paper Practical');
+      $('.first_part_practical_name').val(subject_name+' First Paper Practical');
+      $('.second_part_practical_name').val(subject_name+' Second Paper Practical');
    });
 }

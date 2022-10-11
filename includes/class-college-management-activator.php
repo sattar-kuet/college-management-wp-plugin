@@ -189,8 +189,19 @@ class College_Management_Activator {
            //echo $sql; exit;
            dbDelta( $sql );
         }
+       
+        $sql = "ALTER TABLE `wp_subject` ADD `is_practical` TINYINT(1) NOT NULL DEFAULT '0' AFTER `mendatory`";
+        $wpdb->query($wpdb->prepare($sql));
+        
+        $sql = "ALTER TABLE `wp_subject` ADD `has_practical` TINYINT(1) NOT NULL DEFAULT '0' AFTER `mendatory`";
+        $wpdb->query($wpdb->prepare($sql));
 
-	}
+        $sql = "ALTER TABLE `wp_exam_configuration` ADD `practical_mark` DOUBLE NOT NULL DEFAULT '0' AFTER `written_pass_mark`, ADD `practical_pass_mark` DOUBLE NOT NULL DEFAULT '0' AFTER `practical_mark`";
+        $wpdb->query($wpdb->prepare($sql));
+
+        $sql = "ALTER TABLE `wp_exam_configuration` CHANGE `mcq_mark` `mcq_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `mcq_pass_mark` `mcq_pass_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `written_mark` `written_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `written_pass_mark` `written_pass_mark` DOUBLE NOT NULL DEFAULT '0'";
+        $wpdb->query($wpdb->prepare($sql));
+     }
 
 }
 ?>

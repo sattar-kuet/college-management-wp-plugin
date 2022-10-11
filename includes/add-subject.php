@@ -19,6 +19,11 @@ if(isset($_POST['name'])){
         }else{
           $formatted_data['has_two_part'] = 0;
         }
+        if(isset($data['has_two_part_practical'])){
+          $formatted_data['has_practical'] = 1;
+        }else{
+          $formatted_data['has_practical'] = 0;
+        }
         $formatted_data['parent_id'] = 0;
        // echo '<pre>'; print_r($formatted_data); exit;
         $wpdb->insert($table,$formatted_data);
@@ -34,6 +39,17 @@ if(isset($_POST['name'])){
           $child_subject['name'] = $data['second_part_name'];
           $wpdb->insert($table,$child_subject);
       }
+      if(isset($data['has_two_part_practical'])){
+        $child_subject['name'] = $data['first_part_practical_name'];
+        $child_subject['parent_id'] = $parent_id;
+        $child_subject['has_two_part'] = 0;
+        $child_subject['is_practical'] = 1;
+        $child_subject['group_name'] = $data['group_name'];
+        $child_subject['mendatory'] = $formatted_data['mendatory'];
+        $wpdb->insert($table,$child_subject);
+        $child_subject['name'] = $data['second_part_practical_name'];
+        $wpdb->insert($table,$child_subject);
+    }
 
       //  print_r($result); exit;
 }
@@ -44,35 +60,35 @@ if(isset($_POST['name'])){
         <table>
                 <tr>
                         <td>Name</td>
-                        <td><input type="text" name="name" class="subject_name" required></td>
+                        <td><input style="width: 300px;" type="text" name="name" class="subject_name" required></td>
                         <td>Has Two Part</td>
                         <td><input type="checkbox" name="has_two_part" id="has_two_part"></td>
                         <td>Has Practical</td>
-                        <td><input type="checkbox" name="has_practical" id="has_practical"></td>
+                        <td><input type="checkbox" name="has_two_part_practical" id="has_two_part_practical"></td>
                 </tr>
                 <tr id="first_part">
                    <td>First Paper</td>
-                   <td><input type="text" name="first_part_name" class="first_part_name"></td>
+                   <td><input style="width: 300px;" type="text" name="first_part_name" class="first_part_name"></td>
                 </tr>
                 <tr id="second_part">
                    <td>Second Paper</td>
-                   <td><input type="text" name="second_part_name" class="second_part_name"></td>
+                   <td><input style="width: 300px;" type="text" name="second_part_name" class="second_part_name"></td>
                 </tr>
 
                 <tr id="first_part_practical">
                    <td>First Paper Pratical</td>
-                   <td><input type="text" name="first_part_name" class="first_part_name"></td>
+                   <td><input style="width: 300px;" type="text" name="first_part_practical_name" class="first_part_practical_name"></td>
                 </tr>
                 <tr id="second_part_practical">
                    <td>Second Paper Practical</td>
-                   <td><input type="text" name="second_part_name" class="second_part_name"></td>
+                   <td><input style="width: 300px;" type="text" name="second_part_practical_name" class="second_part_practical_name"></td>
                 </tr>
                 
                 
                  <tr>
                         <td>Group</td>
                         <td colspan="2">
-                          <select name="group_name" style="width: 100%;" required>
+                          <select name="group_name" style="width: 300px;" required>
                             <?php foreach($GROUPS as $group) {?>
                              <option value="<?php echo $group;?>"><?php echo $group;?></option>
                            <?php } ?>
