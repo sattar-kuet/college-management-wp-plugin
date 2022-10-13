@@ -55,6 +55,12 @@ $active_record = exam_config_data($_GET['id']);
 //echo '<pre>'; print_r($active_record); exit;
  $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id=".$_GET['id'];
  $exam = $wpdb->get_results($sql)[0]; 
+
+ function subject_has_no_child($subject_id){
+  $sql = "SELECT * FROM ".$wpdb->prefix."subject WHERE parent_id=".$_GET['id'];
+  $exam = $wpdb->get_results($sql); 
+  return count($exam);
+ }
 // print_r($exam); exit;
 ?>
 <div class="wrap">
@@ -81,7 +87,7 @@ $active_record = exam_config_data($_GET['id']);
                         </td>
 
                         <td>
-                         <?php if ($subject->has_two_part == 0 &&  $subject->is_practical == 0){?>
+                         <?php if ($subject->has_two_part == 0 || subject_has_no_child($subject->id) &&  $subject->is_practical == 0){?>
                          <input type="text" name="mcq_mark[]" placeholder="MCQ marks" 
                           value="<?php echo $active_record[$subject->id]['mcq_mark'];?>">
                         <?php } else{?>
@@ -90,7 +96,7 @@ $active_record = exam_config_data($_GET['id']);
                         <?php }?>
                        </td>
                        <td>
-                        <?php if ($subject->has_two_part == 0){?>
+                        <?php if ($subject->has_two_part == 0 || subject_has_no_child($subject->id)){?>
                             <input type="text" name="mcq_pass_mark[]" placeholder="MCQ pass marks"
                          value="<?php echo $active_record[$subject->id]['mcq_pass_mark'];?>">
                         <?php }else{?>
@@ -100,7 +106,7 @@ $active_record = exam_config_data($_GET['id']);
                        
                        </td>
                        <td>
-                        <?php if ($subject->has_two_part == 0 && $subject->is_practical == 0 ){?>
+                        <?php if ($subject->has_two_part == 0 || subject_has_no_child($subject->id) && $subject->is_practical == 0 ){?>
                          <input type="text" name="written_mark[]" placeholder="Written marks"
                          value="<?php echo $active_record[$subject->id]['written_mark'];?>" >
                        <?php } else{?>
@@ -109,7 +115,7 @@ $active_record = exam_config_data($_GET['id']);
                       <?php } ?>
                        </td>
                        <td>
-                        <?php if ($subject->has_two_part == 0){?>
+                        <?php if ($subject->has_two_part == 0 || subject_has_no_child($subject->id)){?>
                             <input type="text" name="written_pass_mark[]" placeholder="Written pass marks"
                          value="<?php echo $active_record[$subject->id]['written_pass_mark'];?>">
                         <?php }else{?>
@@ -120,7 +126,7 @@ $active_record = exam_config_data($_GET['id']);
                         </td>
 
                         <td>
-                        <?php if ($subject->has_two_part == 0 && $subject->is_practical == 1){?>
+                        <?php if ($subject->has_two_part == 0 || subject_has_no_child($subject->id)) && $subject->is_practical == 1){?>
                             <input type="text" name="practical_mark[]" placeholder="Practical marks"
                          value="<?php echo $active_record[$subject->id]['practical_mark'];?>">
                         <?php }else{?>
@@ -130,7 +136,7 @@ $active_record = exam_config_data($_GET['id']);
                         <?php } ?>
                         </td>
                         <td>
-                        <?php if ($subject->has_two_part == 0 &&  $subject->has_practical == 1){?>
+                        <?php if ($subject->has_two_part == 1 || subject_has_no_child($subject->id)) &&  $subject->has_practical == 1){?>
                             <input type="text" name="practical_pass_mark[]" placeholder="Practical pass marks"
                          value="<?php echo $active_record[$subject->id]['practical_pass_mark'];?>">
                         <?php }else{?>
