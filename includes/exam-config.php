@@ -74,7 +74,7 @@ $active_record = exam_config_data($_GET['id']);
  }
 
  function is_eligible_for_marks_input($subject){
-  if(is_eligible_for_passmark($subject)){
+  if(is_eligible_for_passmark($subject) && !subject_has_no_child($subject->id)){
     return false;
   }
    if($subject->is_practical == 0){
