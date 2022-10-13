@@ -20,15 +20,20 @@ if(isset($_POST['submit_btn'])){
           $id = $old_record[0]->id;
           $mcq_mark = $data['mcq'][$student_id][$subject_id];
           if(empty($data['mcq'][$student_id][$subject_id])){
-            $mcq_mark = 'null';
+            $mcq_mark = 0;
           }
           $written_mark = $data['written'][$student_id][$subject_id];
           if(empty($data['written'][$student_id][$subject_id])){
-            $written_mark = 'null';
+            $written_mark = 0;
+          }
+          $practical_mark = $data['practical'][$student_id][$subject_id];
+          if(empty($data['practical'][$student_id][$subject_id])){
+            $practical_mark = 0;
           }
           $sql = "UPDATE $table SET ";
           $sql .=" mcq_mark=".$mcq_mark;
           $sql .=", written_mark=".$written_mark;
+          $sql .=", practical_mark=".$practical_mark;
           $sql .=" WHERE id=".$id;
           //echo $sql; exit;
           $wpdb->query($wpdb->prepare($sql));
@@ -42,7 +47,8 @@ if(isset($_POST['submit_btn'])){
           $formatted_data['subject_type'] = $data['subject_type'][$student_id][$subject_id];  
           $formatted_data['mcq_mark'] = $data['mcq'][$student_id][$subject_id];   
           $formatted_data['written_mark'] = $data['written'][$student_id][$subject_id];
-        // print_r($formatted_data); exit;
+          $formatted_data['practical_mark'] = $data['practical'][$student_id][$subject_id];
+          //print_r($formatted_data); exit;
           $result = $wpdb->insert($table,$formatted_data);
         }
     }
@@ -110,6 +116,8 @@ foreach($exam_configurations as $exam_configuration){
   $active_record[$exam_configuration->subject_id]['mcq_pass_mark'] = $exam_configuration->mcq_pass_mark;
   $active_record[$exam_configuration->subject_id]['written_mark'] = $exam_configuration->written_mark;
   $active_record[$exam_configuration->subject_id]['written_pass_mark'] = $exam_configuration->written_pass_mark;
+  $active_record[$exam_configuration->subject_id]['practical_mark'] = $exam_configuration->practical_mark;
+  $active_record[$exam_configuration->subject_id]['practical_pass_mark'] = $exam_configuration->practical_pass_mark;
 }
 //print_r($active_record); exit;
  $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id=".$_GET['id'];
@@ -119,17 +127,19 @@ foreach($exam_configurations as $exam_configuration){
  $exam_results = $wpdb->get_results($sql); 
  $mcq_mark=[]; 
  $written_mark=[]; 
+ $practical_mark=[]; 
  foreach($exam_results as $exam_result){
 
      $mcq_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->mcq_mark;
      $written_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->written_mark;
+     $practical_mark[$exam_result->student_id][$exam_result->subject_id] = $exam_result->practical_mark;
  }
 
 // echo '<pre>'; print_r($mcq_mark); 
 
   $sql = "SELECT subject.id as subject_id, subject.name as subject_name FROM ".$wpdb->prefix."exam_configuration as exam_config";
   $sql .=" LEFT JOIN wp_subject as subject ON exam_config.subject_id = subject.id";
-  $sql .=" WHERE subject.has_two_part = 0 AND (exam_config.mcq_mark !=0 OR exam_config.written_mark != 0)";
+  $sql .=" WHERE subject.has_two_part = 0 AND (exam_config.mcq_mark !=0 OR exam_config.written_mark != 0 OR exam_config.practical_mark != 0)";
  $subjects = $wpdb->get_results($sql);
  $urls = [];
  $current_url = admin_url('admin.php?page='.$_GET['page'].'&action='.$_GET['action'].'&id='.$_GET['id']);
@@ -170,6 +180,11 @@ foreach($exam_configurations as $exam_configuration){
                       Written Marks
                     <?php }?>
                   </th>
+                  <th>
+                 <?php if($active_record[$subject_id_from_url]['practical_mark'] != 0){?>
+                      Practical Marks
+                    <?php }?>
+                  </th>
                </tr>
                 <?php 
                 foreach($student_subject_list as $student_subject){ ?>
@@ -194,6 +209,7 @@ foreach($exam_configurations as $exam_configuration){
                          
                           $mcq_name_attr = "mcq[".$student_id."][".$subject_id."]";
                           $written_name_attr = "written[".$student_id."][".$subject_id."]";
+                          $practical_name_attr = "practical[".$student_id."][".$subject_id."]";
                         ?>
 
                         <tr>
@@ -223,6 +239,14 @@ foreach($exam_configurations as $exam_configuration){
                               <input type="number" step="0.01" max="<?php echo $active_record[$subject_id]['written_mark'];?>"  name="<?php echo $written_name_attr; ?>" placeholder="Written mark" <?php if(isset($written_mark[$student_id][$subject_id])) {?> value="<?php echo $written_mark[$student_id][$subject_id];?>" <?php } ?>>
                                <?php }else{?>
                             <input type="hidden"  name="<?php echo $written_name_attr; ?>" value="0">
+
+                          <?php } ?>
+                            </td>   
+                            <td>
+                              <?php if($active_record[$subject_id]['practical_mark'] != 0){?>
+                              <input type="number" step="0.01" max="<?php echo $active_record[$subject_id]['practical_mark'];?>"  name="<?php echo $practical_name_attr; ?>" placeholder="practical mark" <?php if(isset($practical_mark[$student_id][$subject_id])) {?> value="<?php echo $practical_mark[$student_id][$subject_id];?>" <?php } ?>>
+                               <?php }else{?>
+                            <input type="hidden"  name="<?php echo $practical_name_attr; ?>" value="0">
 
                           <?php } ?>
                             </td>   

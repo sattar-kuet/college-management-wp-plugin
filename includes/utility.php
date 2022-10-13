@@ -73,18 +73,18 @@ function exam_config($exam_id){
       $active_record[$subject_id]['practical_pass_mark'] = $exam_configuration->practical_pass_mark;
     }
 	}
-  echo '<pre>'; print_r($active_record); exit;
+ // echo '<pre>'; print_r($active_record); exit;
 	return $active_record;
 }
 
 function process_result($exam_id = 0){
-	global $wpdb;
-	$sql = "SELECT * FROM ".$wpdb->prefix."student_result WHERE exam_id=".$exam_id." ORDER BY student_id ASC";
+	  global $wpdb;
+	  $sql = "SELECT * FROM ".$wpdb->prefix."student_result WHERE exam_id=".$exam_id." ORDER BY student_id ASC";
     $exam_results = $wpdb->get_results($sql); 
     $total = [];
     $failed_student_list = [];
     $exam_config = exam_config($exam_id);
-    //echo '<pre>'; print_r($exam_results); 
+    //echo '<pre>'; print_r($exam_results); exit;
     $pre_formatted_data = [];
     foreach ($exam_results as $exam_result) {
 
@@ -106,18 +106,22 @@ function process_result($exam_id = 0){
       }else{
         $pre_formatted_data[$student_id][$subject_id]['written_mark']  =  $exam_result->written_mark;
       }
+      if(isset($pre_formatted_data[$student_id][$subject_id]['practical_mark'] )){
+          $pre_formatted_data[$student_id][$subject_id]['practical_mark']  +=  $exam_result->practical_mark;
+      }else{
+        $pre_formatted_data[$student_id][$subject_id]['practical_mark']  =  $exam_result->practical_mark;
+      }
       
     }
      
-     //print_r($pre_formatted_data); exit;
+    //echo '<pre>'; print_r($pre_formatted_data); exit;
 
     foreach($pre_formatted_data as $student_id => $pre_formatted_data_row){
        $exam_result = array_values($pre_formatted_data_row)[0];
        
        //echo '<pre>'; 
        //print_r($pre_formatted_data_row); 
-      // print_r($exam_result); 
-       //exit;
+      // print_r($exam_result); exit;
        $subject_id = $exam_result['subject_id'];
 
        $processed_result['exam_id'] = $exam_id;   
@@ -126,8 +130,8 @@ function process_result($exam_id = 0){
        $processed_result['subject_id'] = $subject_id;   
        $processed_result['mcq_mark'] = $exam_result['mcq_mark'];   
        $processed_result['written_mark'] = $exam_result['written_mark'];   
-       $processed_result['total_mark'] = $exam_result['mcq_mark'] + $exam_result['written_mark'];  
-       $maximum_mark = $exam_config[$subject_id]['mcq_mark'] + $exam_config[$subject_id]['written_mark'];
+       $processed_result['total_mark'] = $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];  
+       $maximum_mark = $exam_config[$subject_id]['mcq_mark'] + $exam_config[$subject_id]['written_mark']+ $exam_config[$subject_id]['practical_mark'];
        $processed_result['percentage_mark'] = ($processed_result['total_mark']/$maximum_mark)*100;   
        $gpa_grade = process_gpa_and_grade($exam_config, $exam_result, $processed_result['percentage_mark']); 
        $processed_result['gpa'] = $gpa_grade['gpa'];     
@@ -147,11 +151,16 @@ function process_result($exam_id = 0){
        }else{
        	  $total[$student_id]['written_mark'] =  $exam_result['written_mark'];
        } 
+       if(isset($total[$student_id]['practical_mark'])){
+       	  $total[$student_id]['practical_mark'] +=  $exam_result['practical_mark'];
+       }else{
+       	  $total[$student_id]['practical_mark'] =  $exam_result['practical_mark'];
+       } 
 
        if(isset($total[$student_id]['total_mark'])){
-       	  $total[$student_id]['total_mark'] +=  $exam_result['mcq_mark'] + $exam_result['written_mark'];
+       	  $total[$student_id]['total_mark'] +=  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
        }else{
-       	  $total[$student_id]['total_mark'] =  $exam_result['mcq_mark'] + $exam_result['written_mark'];
+       	  $total[$student_id]['total_mark'] =  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
        }
        if(isset($total[$student_id]['total_gpa'])){
        	  if($exam_result['subject_type'] == 0 && $gpa_grade['gpa']>2){

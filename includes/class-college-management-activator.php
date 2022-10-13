@@ -200,6 +200,12 @@ class College_Management_Activator {
         $wpdb->query($wpdb->prepare($sql));
 
         $sql = "ALTER TABLE `wp_exam_configuration` CHANGE `mcq_mark` `mcq_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `mcq_pass_mark` `mcq_pass_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `written_mark` `written_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `written_pass_mark` `written_pass_mark` DOUBLE NOT NULL DEFAULT '0'";
+       
+        $wpdb->query($wpdb->prepare($sql));
+        $sql = "ALTER TABLE `wp_student_result` ADD `practical_mark` DOUBLE NOT NULL DEFAULT '0' AFTER `mcq_mark`";
+        $wpdb->query($wpdb->prepare($sql));
+
+        $sql = "ALTER TABLE `wp_student_result` CHANGE `written_mark` `written_mark` DOUBLE NOT NULL DEFAULT '0', CHANGE `mcq_mark` `mcq_mark` DOUBLE NOT NULL DEFAULT '0'";
         $wpdb->query($wpdb->prepare($sql));
      }
 
