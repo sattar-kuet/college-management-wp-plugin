@@ -58,12 +58,13 @@ $active_record = exam_config_data($_GET['id']);
 
  function subject_has_no_child($subject_id){
   global $wpdb;
-  $sql = "SELECT * FROM ".$wpdb->prefix."subject WHERE parent_id=".$_GET['id'];
+  $sql = "SELECT * FROM ".$wpdb->prefix."subject WHERE parent_id=".$subject_id;
   //echo $sql; exit;
   $exam = $wpdb->get_results($sql); 
   //echo count($exam); exit;
   return count($exam)? false:true;
  }
+
 // print_r($exam); exit;
 ?>
 <div class="wrap">
