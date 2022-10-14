@@ -137,7 +137,7 @@ foreach($exam_configurations as $exam_configuration){
 
 // echo '<pre>'; print_r($mcq_mark); 
 
-  $sql = "SELECT subject.id as subject_id, subject.name as subject_name FROM ".$wpdb->prefix."exam_configuration as exam_config";
+  $sql = "SELECT DISTINCT subject.id as subject_id, subject.name as subject_name FROM ".$wpdb->prefix."exam_configuration as exam_config";
   $sql .=" LEFT JOIN wp_subject as subject ON exam_config.subject_id = subject.id";
   $sql .=" WHERE subject.has_two_part = 0 AND (exam_config.mcq_mark !=0 OR exam_config.written_mark != 0 OR exam_config.practical_mark != 0)";
  $subjects = $wpdb->get_results($sql);
