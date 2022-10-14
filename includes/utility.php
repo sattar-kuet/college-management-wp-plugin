@@ -293,11 +293,11 @@ function process_gpa_and_grade($exam_config, $exam_result, $percentage_mark){
 	$mcq_pass_mark = $exam_config[$subject_id]['mcq_pass_mark'];
 	$written_pass_mark = $exam_config[$subject_id]['written_pass_mark'];
   // echo '<pre>'; print_r($mcq_pass_mark);
-   //  print_r($written_pass_mark);
+  //   print_r($written_pass_mark);
    //  print_r($exam_result);
-   // print_r($percentage_mark);
-   //   exit;
-    if($exam_result->mcq_mark < $mcq_pass_mark || $exam_result->written_mark < $written_pass_mark){
+  //  print_r($percentage_mark);
+    //  exit;
+    if($exam_result['mcq_mark'] < $mcq_pass_mark || $exam_result['written_mark'] < $written_pass_mark){
      // echo 'wrong place1'; exit;
     	return ['gpa' => 0, 'grade' => 'F'];
     }
