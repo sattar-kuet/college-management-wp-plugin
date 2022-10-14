@@ -58,6 +58,7 @@ $sql = "SELECT * FROM ".$wpdb->prefix."exam WHERE id =".$_GET['id'];
 $exam = $wpdb->get_results($sql)[0];
 
 $sql = "SELECT 
+               DISTINCT student_subject.subject_id
                student.id as student_id, 
                student_subject.id as student_subject_id, 
                student.name as student_name, 
