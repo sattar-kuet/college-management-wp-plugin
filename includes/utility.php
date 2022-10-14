@@ -242,7 +242,7 @@ function add_or_update_overall_result($exam_id,$total_list){
         $total_subject = $total['total_subject'];
        // print_r($total_subject); exit;
         if($total_subject == 0){
-            echo 'omg. something fishi'; exit;
+           // echo 'omg. something fishi'; exit;
           continue;
         }
         //print_r($total); exit;

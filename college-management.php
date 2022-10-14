@@ -187,6 +187,9 @@ function itscholarbd_exam_configuration_action() {
         if($_GET['action'] == 'result_show'){
             require plugin_dir_path( __FILE__ ) . 'includes/exam-result-show.php';
         }
+        if($_GET['action'] == 'detail_result_show'){
+            require plugin_dir_path( __FILE__ ) . 'includes/exam-detail-result-show.php';
+        }
         if($_GET['action'] == 'result_publish'){
             require plugin_dir_path( __FILE__ ) . 'includes/utility.php';
             global $wpdb;
