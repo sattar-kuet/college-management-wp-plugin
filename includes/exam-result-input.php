@@ -95,7 +95,7 @@ foreach($student_subjects as $student_subject){
 
    if($student_subject->subject_type != -1 && !empty($student_subject->subject_name
     && $_GET['subject_id'] == $student_subject->subject_id)){
-     $student_subject_list[$index]['subjects'][] = [
+     $student_subject_list[$index]['subjects'][$student_subject->subject_id] = [
                                          'id' => $student_subject->subject_id,
                                          'parent_id' => $student_subject->subject_parent_id,
                                          'name' => $student_subject->subject_name,
