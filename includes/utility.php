@@ -117,89 +117,94 @@ function process_result($exam_id = 0){
     //echo '<pre>'; print_r($pre_formatted_data); exit;
 
     foreach($pre_formatted_data as $student_id => $pre_formatted_data_row){
-       $exam_result = array_values($pre_formatted_data_row)[0];
-       
-       //echo '<pre>'; 
-       //print_r($pre_formatted_data_row); 
-      // print_r($exam_result); exit;
-       $subject_id = $exam_result['subject_id'];
+       foreach($pre_formatted_data_row as $subject_id => $exam_result){
+          //echo '<pre>'; 
+          // print_r($pre_formatted_data_row); 
+          // print_r($exam_result); exit;
+          $subject_id = $exam_result['subject_id'];
+         // echo $subject_id; exit;
+          $processed_result['exam_id'] = $exam_id;   
+          $processed_result['group_name'] = $exam_result['group_name'];   
+          $processed_result['student_id'] = $student_id;   
+          $processed_result['subject_id'] = $subject_id;   
+          $processed_result['mcq_mark'] = $exam_result['mcq_mark'];   
+          $processed_result['written_mark'] = $exam_result['written_mark'];   
+          $processed_result['total_mark'] = $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];  
+          $maximum_mark = $exam_config[$subject_id]['mcq_mark'] + $exam_config[$subject_id]['written_mark']+ $exam_config[$subject_id]['practical_mark'];
+          $processed_result['percentage_mark'] = ($processed_result['total_mark']/$maximum_mark)*100;   
+          $gpa_grade = process_gpa_and_grade($exam_config, $exam_result, $processed_result['percentage_mark']); 
+          $processed_result['gpa'] = $gpa_grade['gpa'];     
+          $processed_result['grade_name'] = $gpa_grade['grade']; 
+          //print_r($processed_result); 
+          add_or_update_subject_wise_result($processed_result);
 
-       $processed_result['exam_id'] = $exam_id;   
-       $processed_result['group_name'] = $exam_result['group_name'];   
-       $processed_result['student_id'] = $student_id;   
-       $processed_result['subject_id'] = $subject_id;   
-       $processed_result['mcq_mark'] = $exam_result['mcq_mark'];   
-       $processed_result['written_mark'] = $exam_result['written_mark'];   
-       $processed_result['total_mark'] = $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];  
-       $maximum_mark = $exam_config[$subject_id]['mcq_mark'] + $exam_config[$subject_id]['written_mark']+ $exam_config[$subject_id]['practical_mark'];
-       $processed_result['percentage_mark'] = ($processed_result['total_mark']/$maximum_mark)*100;   
-       $gpa_grade = process_gpa_and_grade($exam_config, $exam_result, $processed_result['percentage_mark']); 
-       $processed_result['gpa'] = $gpa_grade['gpa'];     
-       $processed_result['grade_name'] = $gpa_grade['grade']; 
-       //print_r($processed_result); exit;
-       add_or_update_subject_wise_result($processed_result);
+          
+          if(isset($total[$student_id]['mcq_mark'])){
+              $total[$student_id]['mcq_mark'] +=  $exam_result['mcq_mark'];
+          }else{
+              $total[$student_id]['mcq_mark'] =  $exam_result['mcq_mark'];
+          }
 
-       
-       if(isset($total[$student_id]['mcq_mark'])){
-       	  $total[$student_id]['mcq_mark'] +=  $exam_result['mcq_mark'];
-       }else{
-       	  $total[$student_id]['mcq_mark'] =  $exam_result['mcq_mark'];
-       }
+          if(isset($total[$student_id]['written_mark'])){
+              $total[$student_id]['written_mark'] +=  $exam_result['written_mark'];
+          }else{
+              $total[$student_id]['written_mark'] =  $exam_result['written_mark'];
+          } 
+          if(isset($total[$student_id]['practical_mark'])){
+              $total[$student_id]['practical_mark'] +=  $exam_result['practical_mark'];
+          }else{
+              $total[$student_id]['practical_mark'] =  $exam_result['practical_mark'];
+          } 
 
-       if(isset($total[$student_id]['written_mark'])){
-       	  $total[$student_id]['written_mark'] +=  $exam_result['written_mark'];
-       }else{
-       	  $total[$student_id]['written_mark'] =  $exam_result['written_mark'];
-       } 
-       if(isset($total[$student_id]['practical_mark'])){
-       	  $total[$student_id]['practical_mark'] +=  $exam_result['practical_mark'];
-       }else{
-       	  $total[$student_id]['practical_mark'] =  $exam_result['practical_mark'];
-       } 
+          if(isset($total[$student_id]['total_mark'])){
+              $total[$student_id]['total_mark'] +=  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
+          }else{
+              $total[$student_id]['total_mark'] =  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
+          }
+          if(isset($total[$student_id]['total_gpa'])){
+              if($exam_result['subject_type'] == 0 && $gpa_grade['gpa']>2){
+                $total[$student_id]['total_gpa'] +=  $gpa_grade['gpa'] - 2;
+              }else{
+                $total[$student_id]['total_gpa'] +=  $gpa_grade['gpa'];
+              }
+            
+          }else{
+              $total[$student_id]['total_gpa'] =  $gpa_grade['gpa'];
+          }
 
-       if(isset($total[$student_id]['total_mark'])){
-       	  $total[$student_id]['total_mark'] +=  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
-       }else{
-       	  $total[$student_id]['total_mark'] =  $exam_result['mcq_mark'] + $exam_result['written_mark'] + $exam_result['practical_mark'];
-       }
-       if(isset($total[$student_id]['total_gpa'])){
-       	  if($exam_result['subject_type'] == 0 && $gpa_grade['gpa']>2){
-       	  	$total[$student_id]['total_gpa'] +=  $gpa_grade['gpa'] - 2;
-       	  }else{
-       	  	 $total[$student_id]['total_gpa'] +=  $gpa_grade['gpa'];
-       	  }
-       	 
-       }else{
-       	  $total[$student_id]['total_gpa'] =  $gpa_grade['gpa'];
-       }
+          // echo $exam_result->subject_type.'<br/>';
 
-      // echo $exam_result->subject_type.'<br/>';
+          if(isset($total[$student_id]['total_subject'])){
+            if($exam_result['subject_type'] == 1){
 
-       if(isset($total[$student_id]['total_subject'])){
-        if($exam_result['subject_type'] == 1){
+              $total[$student_id]['total_subject'] += 1;
+            }
+          }else{
+              $total[$student_id]['total_subject'] =  1;
+          }
+          if($gpa_grade['gpa'] == 0){
+            $failed_student_list[$student_id] = 1;
+          }
 
-       	  $total[$student_id]['total_subject'] += 1;
+          if(isset($failed_student_list[$student_id])){
+            $total[$student_id]['total_gpa'] = 0;
+          }
+          $total[$student_id]['group_name'] = $exam_result['group_name'];
         }
-       }else{
-       	  $total[$student_id]['total_subject'] =  1;
-       }
-       if($gpa_grade['gpa'] == 0){
-       	$failed_student_list[$student_id] = 1;
-       }
+      }
+        //echo '<pre>'; print_r($total); exit;
+        add_or_update_overall_result($exam_id,$total);
 
-       if(isset($failed_student_list[$student_id])){
-       	$total[$student_id]['total_gpa'] = 0;
-       }
-       $total[$student_id]['group_name'] = $exam_result['group_name'];
-    }
-    //echo '<pre>'; print_r($total); exit;
-    add_or_update_overall_result($exam_id,$total);
+}
 
+function fractional_number_format($number){
+  return number_format((float)$number, 2, '.', '');
 }
 
 
 function add_or_update_subject_wise_result($processed_result){
- // print_r($processed_result); exit;
+ // echo'<pre>'; print_r($processed_result); 
+ // return;
 	 global $wpdb;
 	 $table = $wpdb->prefix."processed_result";
 	 $sql = "SELECT * FROM ".$table." WHERE exam_id=".$processed_result['exam_id'];
@@ -215,7 +220,7 @@ function add_or_update_subject_wise_result($processed_result){
           $sql .=", written_mark=".$processed_result['written_mark'];
           $sql .=", total_mark=".$processed_result['total_mark'];
           $sql .=", percentage_mark=".$processed_result['percentage_mark'];
-          $sql .=", gpa=".$processed_result['gpa'];
+          $sql .=", gpa=".fractional_number_format($processed_result['gpa']);
           $sql .=", grade_name='".$processed_result['grade_name']."'";
           $sql .=" WHERE id=".$id;
           //echo $sql; exit;
@@ -254,7 +259,7 @@ function add_or_update_overall_result($exam_id,$total_list){
           $sql .=" mcq_mark=".$total['mcq_mark'];
           $sql .=", written_mark=".$total['written_mark'];
           $sql .=", total_mark=".$total['total_mark'];
-          $sql .=", gpa=".$gpa;
+          $sql .=", gpa=".fractional_number_format($gpa);
           $sql .=", grade_name='".$grade_name."'";
           $sql .=" WHERE id=".$id;
           //echo $sql; exit;
@@ -268,7 +273,7 @@ function add_or_update_overall_result($exam_id,$total_list){
           $processed_result['mcq_mark'] = $total['mcq_mark'];
           $processed_result['written_mark'] = $total['written_mark'];
           $processed_result['total_mark'] = $total['total_mark'];
-          $processed_result['gpa'] = round($gpa, 2);
+          $processed_result['gpa'] = fractional_number_format($gpa, 2);
           $processed_result['grade_name'] = $grade_name;
           $processed_result['percentage_mark'] = 0;
           
