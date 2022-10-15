@@ -86,8 +86,7 @@ class ProcessedDetailResultListTable extends WP_List_Table{
       }
     }
    
-    array_multisort(array_column($raw_data_array, 'total_mark'), SORT_DESC, $raw_data_array);
-    
+   
    //   print_r($raw_data_array);
    
    
