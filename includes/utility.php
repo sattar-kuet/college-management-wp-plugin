@@ -182,7 +182,7 @@ function process_result($exam_id = 0){
           }else{
               $total[$student_id]['total_subject'] =  1;
           }
-          if($gpa_grade['gpa'] == 0){
+          if($gpa_grade['gpa'] == 0 && $exam_result['subject_type'] == 1){
             $failed_student_list[$student_id] = 1;
           }
 
