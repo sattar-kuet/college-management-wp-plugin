@@ -39,7 +39,8 @@ class ProcessedDetailResultListTable extends WP_List_Table{
     $sql .= " LEFT JOIN ".$wpdb->prefix."student as student ON processed_result.student_id = student.id";
     $sql .= " LEFT JOIN ".$wpdb->prefix."subject as subject ON processed_result.subject_id = subject.id";
     $sql .=" WHERE processed_result.subject_id !=0 ";
-    $sql .=" AND processed_result.student_id=".$_GET['id'];
+    $sql .=" AND processed_result.student_id=".$_GET['student_id'];
+    $sql .=" AND processed_result.exam_id=".$_GET['exam_id'];
     $sql .=" ORDER BY processed_result.gpa DESC";
   
     if($search_term !=''){
@@ -63,8 +64,27 @@ class ProcessedDetailResultListTable extends WP_List_Table{
         $raw_data_array[] = $row;
       }
     }
-  //echo '<pre>'; print_r($raw_data_array);
-    //usort($raw_data_array, "cmp");
+
+    $sql = "SELECT  processed_result.id as processed_result_id, student.id as student_id, student.name as student_name, student.roll as student_roll, student.group_name as student_group, processed_result.total_mark as total_mark, processed_result.gpa as gpa, processed_result.grade_name as grade_name,processed_result.group_name as group_name,processed_result.exam_id as exam_id  FROM ".$wpdb->prefix."processed_result as processed_result";
+    $sql .= " LEFT JOIN ".$wpdb->prefix."student as student ON processed_result.student_id = student.id";
+    $sql .=" WHERE processed_result.subject_id = 0 ";
+    $sql .=" AND processed_result.student_id=".$_GET['student_id'];
+    $sql .=" AND processed_result.exam_id=".$_GET['exam_id'];
+    $sql .=" ORDER BY processed_result.gpa DESC";
+
+    if(count($raw_data) > 0){
+      foreach($raw_data as $single){
+        $row['id'] = $single->processed_result_id;
+        $row['student_id'] = $single->student_id;
+        $row['name'] = $single->student_name;
+        $row['subject_name'] = '-';
+        $row['total_mark'] = $single->total_mark;
+        $row['gpa'] = $single->gpa;
+        $row['grade_name'] = $single->grade_name;
+        
+        $raw_data_array[] = $row;
+      }
+    }
    
     array_multisort(array_column($raw_data_array, 'total_mark'), SORT_DESC, $raw_data_array);
     

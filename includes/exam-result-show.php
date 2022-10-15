@@ -154,7 +154,7 @@ function cmp($a, $b) {
       $action["result_show"] = sprintf('<a href="?page=%s&action=%s&id=%s"> | Result Show</a', $_GET['page'],'result_show',$item['id']);
     }
     if($_GET['action'] != 'detail_result_show'){
-      $action["detail_result_show"] = sprintf('<a href="?page=%s&action=%s&id=%s"> | Detail Result Show</a', $_GET['page'],'detail_result_show',$item['student_id']);
+      $action["detail_result_show"] = sprintf('<a href="?page=%s&action=%s&exam_id=%s&student_id=%s"> | Detail Result Show</a', $_GET['page'],'detail_result_show',$item['id'],$item['student_id']);
     }
 
     return sprintf('%1$s %2$s', $item['name'], $this->row_actions($action));
