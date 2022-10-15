@@ -71,7 +71,7 @@ class ProcessedDetailResultListTable extends WP_List_Table{
     $sql .=" AND processed_result.student_id=".$_GET['student_id'];
     $sql .=" AND processed_result.exam_id=".$_GET['exam_id'];
     $sql .=" ORDER BY processed_result.gpa DESC";
-
+    $raw_data = $wpdb->get_results($sql);
     if(count($raw_data) > 0){
       foreach($raw_data as $single){
         $row['id'] = $single->processed_result_id;
